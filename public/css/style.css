@@ -1,0 +1,110 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar {
+    height: 100vh;
+    width: 130px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    padding-top: 20px;
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar ul {
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar ul li {
+    padding: 15px 0;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: white;
+}
+
+.sidebar ul li:hover {
+    background-color: #555;
+}
+
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+.content h1 {
+    color: #333;
+}
+
+@media (width >= 390px){
+    
+}
+
+@media screen and (min-width: 1024px) {
+    /* Agrega tus estilos específicos para pantallas de PC aquí */
+}
+/* Estilos para pantallas de tablet (ancho entre 768px y 1023px) */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    /* Agrega tus estilos específicos para pantallas de tablet aquí */
+}
+/* Estilos para pantallas de celular (ancho menor o igual a 767px) */
+@media screen and (max-width: 767px) {
+    /* Agrega tus estilos específicos para pantallas de celular aquí */
+}
+
+/*//////////////////////LISTA DE INSTITUCIONES////////////////*/
+.table-container {
+    padding-left: 10%;
+    width: 90%;
+    margin: 20px auto;
+}
+
+.table-listainstituciones {
+    width: 90%;
+    border-collapse: collapse;
+}
+
+.th-listainsti, .td-listainsti {
+    border: 1px solid #ddd; /* Líneas grises que separan los cuadros */
+    padding: 10px;
+    text-align: center;
+}
+
+.thead-listainsti {
+    background-color: #f2f2f2; /* Color de fondo gris para los encabezados de las columnas */
+}
+
+/*////////////////FILTROS DE INSTITUCION///////////////////*/
+.selects-container{
+    padding-top: 10%;
+    padding-left: 5%;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.boton-agregarintitucion{
+    padding-top: 1%;
+}
+
+/*///////////REINICIAR FILTROS/////////*/
+.div-reiniciarfiltros{
+    padding-top: .5%;
+}
+
+.reiniciarfiltros{
+    border-radius: 30px;
+    font-size: 14px;
+    background-color: rgb(226, 224, 224);
+    width: 120px;
+    height: 25px;
+}

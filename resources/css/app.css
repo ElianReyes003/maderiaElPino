@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.lineaabajo{
+    border-bottom-width: 1px;
+}
+.lineaabajo2{
+    border-bottom-width: 2px;
+}
+.lineaderecha{
+    border-left-width: 2px;
+}
+.Ilaboral{
+    margin-left: 4rem;
+}

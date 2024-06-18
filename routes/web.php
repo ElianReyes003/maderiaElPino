@@ -68,7 +68,10 @@ Route::get('/compraEspecifica', function () {
 Route::get('/articuloAgregar', function () {
     return view('formularioArticulos');
 })->name('articleAgg');
+
+//MOVIMIENTOS ///
 Route::get('/movimientosVision', [articulo_controller::class, 'todosmovimientosArticulos'])->name('movimientos.mostrar');
+Route::get('/articulosOpcionesSeleccionables', [articulo_controller::class, 'todosmovimientosArticulos4'])->name('opciones.detalle');
 
 //MUNICIPIO CRUD
 Route::get('/municipioVision', [Municipio_controller::class, 'mostrar'])->name('municipio.vista');

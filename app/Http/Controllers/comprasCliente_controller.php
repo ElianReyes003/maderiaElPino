@@ -16,28 +16,153 @@ use Illuminate\Support\Facades\Log;
 class comprasCliente_controller extends Controller
 {
     public function actualizarClientBuy(Request $req, $pkCompra)
-    {  
+    {
         $comprasCliente = ComprasClientes::find($pkCompra);
-    
         // Buscar el registro de ArticuloTipoVenta
         $tipoVenta = ArticuloTipoVenta::where('fkTipoVenta', $req->fkTipoVenta)
-                                       ->where('fkArticulo', $req->articulito)
-                                       ->first();
-                                       
+                                      ->where('fkArticulo', $req->articulito)
+                                      ->first();
+
+        $tipoVentaDefinida = ArticuloTipoVenta::where('fkArticulo', $req->articulito)
+                                        ->where('pkArticuloTipoVenta', $comprasCliente->fkArticuloTipoVenta)  
+                                      ->first();
+
+
+        $abono = new AbonoArticulo();
+    
         // Verificar si se encontró el registro de ArticuloTipoVenta
         if ($tipoVenta) {
             $comprasCliente->estatus = $req->estatus;
             $comprasCliente->diasDeuda = $req->deuda;
-            $comprasCliente->cantidadASaldar = $req->saldar;
-            $comprasCliente->fkArticuloTipoVenta = $tipoVenta->pkArticuloTipoVenta; // Asignar la clave primaria del registro de ArticuloTipoVenta
-            $comprasCliente->save();
-            
+    
+            if ($req->saldar != $comprasCliente->cantidadASaldar) {
+                $comprasCliente->cantidadASaldar = $req->saldar;
+                $abono->fkConcepto = 2;
+
+                $abono->fecha = now();
+                $abono->estatus = 1;
+                $abono->abono = $req->saldar;
+                $abono->saldo = $comprasCliente->cantidadASaldar;
+                $abono->fkEmpleado=session('id');
+                $abono->fkComprasCliente=$pkCompra;
+                $abono->folioAbono = uniqid();
+
+                if ($req->saldar == 0) {
+                    $comprasCliente->estatus = 0;
+                }
+                $abono->save();
+                $comprasCliente->save();
+
                 return redirect(url('/historialCompras'))->with('success', '¡Compra Actualizada!');
-           
+            }
+    
+            date_default_timezone_set('America/Mazatlan');
+       
+            if ($comprasCliente) {
+               
+                $abono->fecha = now();
+                $abono->estatus = 1;
+                $abono->abono = 0;
+
+                
+    
+                // Asignar concepto basado en condiciones
+                
+    
+                $abono->saldo = $comprasCliente->cantidadASaldar;
+                $abono->fkEmpleado = session('id');
+                $abono->fkComprasCliente = $tipoVenta->pkArticuloTipoVenta;
+    
+                $totalAbonado = AbonoArticulo::where('fkComprasCliente', $pkCompra)
+                ->where('fkConcepto', 1)->sum('abono');
+
+                if ($tipoVentaDefinida->fkTipoVenta != $tipoVenta->fkTipoVenta) {
+                    
+                    $totalSaldar = $tipoVenta->cantidadTipoVenta - $totalAbonado;
+                    $comprasCliente->cantidadASaldar = $totalSaldar;
+                    $abono->folioAbono = uniqid();
+                    $abono->abono = 0;
+                    $abono->fkEmpleado=session('id');
+                    $abono->saldo = $comprasCliente->cantidadASaldar;
+                    $abono->fkComprasCliente=$pkCompra;
+
+                    if ($tipoVentaDefinida->fkTipoVenta== 2 && $req->fkTipoVenta == 3) {
+                        $abono->fkConcepto = 3;
+                        $comprasCliente->fkArticuloTipoVenta = $tipoVenta-> pkArticuloTipoVenta;
+                    } elseif ($tipoVentaDefinida->fkTipoVenta == 2 && $req->fkTipoVenta == 4) {
+                        $abono->fkConcepto = 4;
+                        $comprasCliente->fkArticuloTipoVenta = $tipoVenta->pkArticuloTipoVenta;
+                    } elseif ($tipoVentaDefinida->fkTipoVenta == 3 && $req->fkTipoVenta == 4) {
+                        $abono->fkConcepto = 5;
+                        $comprasCliente->fkArticuloTipoVenta = $tipoVenta->pkArticuloTipoVenta;
+                    }
+                    $abono->save();
+                    $comprasCliente->save();
+    
+                    return redirect(url('/historialCompras'))->with('success', '¡Compra Actualizada!');
+                } else {
+                    $totalSaldar = $comprasCliente->cantidadASaldar;
+                    $abono->save();
+                    $comprasCliente->save();
+    
+                    return redirect(url('/historialCompras'))->with('success', '¡Compra Actualizada!');
+                }
+    
+             
+                $tipoVenta2 = ArticuloTipoVenta::where('fkTipoVenta', 2)
+                                               ->where('fkArticulo', $req->articulito)
+                                               ->first();
+                $liquidacion2 = $tipoVenta2 ? $tipoVenta2->cantidadTipoVenta - $comprasCliente->cantidadASaldar : null;
+                $fechaUnMesAtras = now()->subMonth();
+    
+                if ($comprasCliente->fecha <= $fechaUnMesAtras && $liquidacion2 == 0) {
+                    $abono->fkConcepto = 7;
+                    $abono->save();
+                    $comprasCliente->estatus = 0;
+                    $comprasCliente->cantidadASaldar = 0;
+                    $comprasCliente->diasDeuda = $req->diasDeuda;
+                    $comprasCliente->estatusDeCobro = 0;
+                    $abono->folioAbono = uniqid();
+                    $abono->save();
+                    $comprasCliente->save();
+    
+                    return redirect(url('/historialCompras'))->with('success', '¡Compra Actualizada!');
+                }
+    
+                $tipoVenta3 = ArticuloTipoVenta::where('fkTipoVenta', 3)
+                                               ->where('fkArticulo', $req->articulito)
+                                               ->first();
+                $liquidacion3 = $tipoVenta3 ? $tipoVenta3->cantidadTipoVenta - $comprasCliente->cantidadASaldar : null;
+                $fechaDosMesesAtras = now()->subMonths(2);
+    
+                if ($comprasCliente->fecha <= $fechaDosMesesAtras && $liquidacion3 == 0) {
+                    $abono->fkConcepto = 6;
+                    $abono->save();
+                    $comprasCliente->estatus = 0;
+                    $comprasCliente->cantidadASaldar = 0;
+                    $comprasCliente->diasDeuda = $req->diasDeuda;
+                    $comprasCliente->estatusDeCobro = 0;
+                    $abono->folioAbono = uniqid();
+                    $abono->save();
+                    $comprasCliente->save();
+    
+                    return redirect(url('/historialCompras'))->with('success', '¡Compra Actualizada!');
+                }
+    
+                $comprasCliente->diasDeuda = $req->diasDeuda;
+                $comprasCliente->estatusDeCobro = 0;
+                $abono->folioAbono = uniqid();
+                $abono->save();
+                $comprasCliente->save();
+    
+                return redirect(url('/historialCompras'))->with('success', '¡Compra Actualizada!');
+            }
         } else {
-            return redirect(url()->previous() )->with('error', 'Error: No se actualizo la compra');
+            return redirect(url()->previous())->with('error', 'Error: No se actualizó la compra');
         }
     }
+    
+    
     
 
 
@@ -78,6 +203,8 @@ class comprasCliente_controller extends Controller
                     $articulo->estatus=0;
                 }
                 $articulo->save();
+
+
                 for ($j = 0; $j < $cantidad; $j++) {
                     $comprasCliente = new ComprasClientes();
                     $comprasCliente->fkCliente = $cliente;;
@@ -201,9 +328,6 @@ class comprasCliente_controller extends Controller
 
         public function detalleCompra($pkCompra)
         {
-
-        
-        
         $abonos= ComprasClientes::join('abonoarticulo', 'abonoarticulo.fkComprasCliente', '=', 'comprascliente.pkComprasCliente')
         ->select('abonoarticulo.*')     
         ->where('compracliente.pkCompra', '=', $pkCompra)
@@ -213,12 +337,10 @@ class comprasCliente_controller extends Controller
         ->join('articulotipoventa', 'articulotipoventa.pkArticuloTipoVenta', '=', 'comprascliente.fkArticuloTipoVenta')
         ->join('articulo', 'articulo.pkArticulo', '=', 'articulotipoventa.fkArticulo')
         ->join('tipoventa', 'tipoventa.pkTipoVenta', '=', 'articulotipoventa.fkTipoVenta')
-       
-        ->select('cliente.*','comprascliente.*', 'comprascliente.estatus as estatusCompra','articulotipoventa.*', 'articulo.*', 'tipoventa.*')
-
+        ->join('concepto', 'concepto.pkConcepto', '=', 'comprascliente.fkConcepto')
+        ->select('cliente.*','comprascliente.*','concepto.*', 'comprascliente.estatus as estatusCompra','articulotipoventa.*', 'articulo.*', 'tipoventa.*')
         ->where('compracliente.pkCompra', '=', $pkCompra)
         ->get();
-      
 
             return view('detalleCompra',compact('abonos','compra'));
         }
@@ -313,5 +435,4 @@ class comprasCliente_controller extends Controller
 }
 
 
-
-        }
+  }

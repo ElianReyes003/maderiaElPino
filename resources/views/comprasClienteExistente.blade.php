@@ -119,9 +119,7 @@
         </div>
      </div>
 
-
-
-<div class="p-4 sm:ml-64">
+     <div class="p-4 sm:ml-64">
         <!-- Guias del tamaño del contenedor -->
         <div class="p-4">
            <!-- PON EL CODIGO DEL MODULO AQUI-->
@@ -139,7 +137,6 @@
                             <input type="search"  id="busqueda"  class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-400 focus:border-green-400" placeholder="Buscar" required>
                         </div>
                     </form>
-                
                  </div>
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
                  <label for="underline_select" class="sr-only">Selecciona Categoria Articulo</label>
@@ -155,14 +152,15 @@
                                 </select>
                                 <label for="underline_select" class="sr-only">Selecciona Estatus</label>
                                 <select name="fkEstatus" id="fkEstatus" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
-                                  
                                     <option selected value="" >Estatus</option>
                         <option value="1">Disponible</option>
                         <option value="0">No Disponible</option>
                         <option value="2">Por Agotarse</option>
-                    </select>   
-                    <div class="flex mt-5">
-                        <button  type="button"id="limpiarFiltros2" class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">Limpiar filtros</button>
+                    </select>
+                    <div class="flex mt-3   ">
+                        <button type="button"id="limpiarFiltros" class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+                            Limpiar filtros
+                        </button>    
                     </div>
                  </div>
 			</div>
@@ -173,7 +171,7 @@
 					<h1 class="text-center font-bold text-2xl mt-5">Selecciona articulos</h1>
 				</div>
 			</div>
-			<table class="w-full table-auto mt-[1rem]"  id="tablaArticulos" c class="display nowrap" width="90%">
+			<table class="w-full table-auto mt-[1rem]"  id="tablaArticulos" class="display nowrap" width="90%">
 				<thead class="text-center">
 					<tr class="h-24 text-center">
                         <td class="oculto">ID</td>
@@ -181,6 +179,7 @@
                         <th>Categoria</th>
                         <th>Precio</th>
                         <th>Estatus</th>
+                        <th>Enganche</th>
                         <th>Seleccionar</th>
 					</tr>
 					<tbody>
@@ -201,10 +200,11 @@
                                 Estado Desconocido
                             @endif
                         </th>
-							<td class="items-center flex mt-3 justify-center">									
-								<div class="flex mt-2 md:mt-5">
+                        <th>{{$dato->enganche}}</th>
+							<td class="items-center flex justify-center">									
+								<div class="mt-2 md:mt-5">
 									<input type="checkbox" name="articulo-seleccionado" class="seleccionar-articulo" data-articulo-id="{{$dato->pkArticulo}}" class="w-6 h-6 rounded text-green-400 bg-gray-100 border-gray-300 focus:ring-green-400 focus:ring-2">
-								</div>
+                                </div>
 							</td>
 						</tr>
                     @endforeach
@@ -216,11 +216,11 @@
 					<div class="md:p-10 p-5">
 						  <div class="flex">
 							<!-- Previous Button -->
-                            <button type="button" id="previousBtn2"class="flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+                            <button id="previousBtn"class="flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
 							  Anterior
 							</button>
 							<!-- Next Button -->
-							<button type="button" id="nextBtn2"  class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+							<button id="nextBtn"  class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
 							  Siguiente
 							</button>
 						  </div>
@@ -246,6 +246,7 @@
                     <th>Precio</th>
                     <th>Ingresa cantidad</th>
                     <th>Tipo de compra</th>
+                    <th>Enganche</th>
                     <th>Cancelar</th>
 				</tr>
 				<tbody id="detalle-articulos-body">
@@ -257,11 +258,11 @@
 				<div class="md:p-10 p-5">
 					  <div class="flex">
 						<!-- Previous Button -->
-                        <button type="button" id="previousBtn3"class="flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+                            <button id="previousBtn2" class="flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
 							  Anterior
 							</button>
 							<!-- Next Button -->
-							<button type="button" id="nextBtn3"  class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+							<button   id="nextBtn2"  class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
 							  Siguiente
 							</button>
 					  </div>
@@ -278,7 +279,7 @@
 			
 		</div>
 	</div>
- </div>       
+ </div> 
         <input type="hidden" name="producto_id[]" value="">
         <input type="hidden" name="cantidadotas[]" value="">
         <input type="hidden" name="tipoVenta[]" value="">
@@ -315,24 +316,16 @@
 
 <script>
 
+   
+
 
 var fila=0;
     var numeroDeFila=0;
     var precioOriginal=0;
     var tipoVentaSelected = 0;
-   
-    // Función para calcular el precio total
-    function calcularPrecioTotal(cantidad) {
-        return cantidad * precioOriginal;
-    }
-  
-   
-
-    var fila=0;
-    var numeroDeFila=0;
-    var precioOriginal=0;
-    var tipoVentaSelected = 0;
-   
+    var paraEnganche = 0;
+    var contador=0;
+    var precioAño=0;
     // Función para calcular el precio total
     function calcularPrecioTotal(cantidad) {
         return cantidad * precioOriginal;
@@ -343,30 +336,35 @@ var fila=0;
     //SELECCION DE ARTICULO Y LISTA 
 $(document).ready(function () {
 
-  
-   
     function calcularTotalAPagar() {
-    var total = 0;
-    var enganche = 0;
+  var total = 0;
+  var enganche = 0;
+    
+  $('#articulos-lista tbody tr').each(function () {
+    var cantidad = parseFloat($(this).find('[id^="cantidad"]').val()) || 0;
 
-    $('#articulos-lista tbody tr').each(function () {
-        var cantidad = parseFloat($(this).find('[id^="cantidad"]').val()) || 0;
-        var precioOriginal = tableArticulosSeleccionados.row(this).data().precioOriginal;
-        var tipoVenta = $(this).find("[id^=fkTipoVenta]").val();
+    
+    var precioOriginal = tableArticulosSeleccionados.row(this).data().precioOriginal;
+    var enganche1 = tableArticulosSeleccionados.row(this).data().enganche;
+    var tipoVenta = $(this).find("[id^=fkTipoVenta]").val();
 
-        total += isNaN(cantidad) ? 0 : cantidad * precioOriginal;
 
-        if (tipoVenta === "1") {
-            // Si el tipo de venta es 1, el enganche es 0
-            enganche += 0;
-        } else {
-            // De lo contrario, calcula el 10% del precio original como enganche
-            enganche += isNaN(cantidad) ? 0 : cantidad * (precioOriginal * 0.10);
-        }
-    });
+    total += isNaN(cantidad) ? 0 : cantidad * precioOriginal;
+    console.log(precioAño);
+    // Establecer paraEnganche al 10% del precioOriginal si el tipoVenta es 4 (primera vez)
 
-    $('.totalPago').text('$' + total.toFixed(2));
-    $('.totalEnganche').text('$' + enganche.toFixed(2));
+    // Calcular el enganche basado en el valor de paraEnganche
+    if (tipoVenta === "1") {
+      // Si el tipo de venta es 1, el enganche es 0
+      enganche += 0;
+    } else {
+      // De lo contrario, calcular el enganche usando el valor de paraEnganche
+      enganche += isNaN(cantidad) ? 0 : cantidad * enganche1;
+    }
+  });
+
+  $('.totalPago').text('$' + total.toFixed(2));
+  $('.totalEnganche').text('$' + enganche.toFixed(2));
 }
 
 
@@ -386,41 +384,42 @@ $(document).ready(function () {
             },
         },
     });
-    $('#limpiarFiltros2').on('click', function () {
+    $('#previousBtn').on('click', function(e) {
+      e.preventDefault();
+      tableArticulos.page('previous').draw(false);
+    });
+
+    // Agrega evento de clic al botón Next
+    $('#nextBtn').on('click', function(e) {
+      e.preventDefault();
+      tableArticulos.page('next').draw(false);
+    });
+    $('#limpiarFiltros').on('click', function () {
         $('#fkEstatus, #fkCategoria').val('');
         tableArticulos.search('').columns().search('').draw();
     });
-     // Agrega evento de clic al botón Previous
-     $('#previousBtn2').on('click', function(e) {
-        e.preventDefault();
-        tableArticulos.page('previous').draw(false);
-        });
 
-        // Agrega evento de clic al botón Next
-        $('#nextBtn2').on('click', function(e) {
-        e.preventDefault();
-        tableArticulos.page('next').draw(false);
-        });
     var tableArticulosSeleccionados = $('#articulos-lista').DataTable({
         responsive: true,
         "language": {
             "emptyTable": "No hay datos disponibles en la tabla",
         },
     });
-    $('#previousBtn3').on('click', function(e) {
-        e.preventDefault();
-        tableArticulosSeleccionados.page('previous').draw(false);
-        });
+    $('#previousBtn2').on('click', function(e) {
+      e.preventDefault();
+      tableArticulosSeleccionados.page('previous').draw(false);
+    });
 
-        // Agrega evento de clic al botón Next
-        $('#nextBtn3').on('click', function(e) {
-        e.preventDefault();
-        tableArticulosSeleccionados.page('next').draw(false);
-        });
+    // Agrega evento de clic al botón Next
+    $('#nextBtn2').on('click', function(e) {
+      e.preventDefault();
+      tableArticulosSeleccionados.page('next').draw(false);
+    });
+
     $('#fkEstatus, #fkCategoria').change(function () {
         var estatus = $('#fkEstatus').val();
         var categoria = $('#fkCategoria').val();
-        if (estatus === '1') {
+            if (estatus === '1') {
             estatus = 'Disponible';
         } else if (estatus === '2') {
             estatus = 'Por Agotarse';
@@ -438,36 +437,48 @@ $(document).ready(function () {
         tableArticulos.search(filtroBusqueda).draw();
     });
 
-    
-    $('#tablaArticulos tbody').on('click', 'tr', function () {
+    $('#limpiarFiltros').on('click', function () {
+        $('#fkEstatus, #fkCategoria').val('');
+        tableArticulos.search('').columns().search('').draw();
+    });
+
+     $('#tablaArticulos tbody').on('click', 'tr', function () {
         var checkbox = $(this).find('.seleccionar-articulo');
         checkbox.prop('checked', !checkbox.prop('checked'));
-
+        var tipoVentaSeleccionado = $(this).find("[id^='fkTipoVenta']").val();
+        var fila = $(this);
         var data = tableArticulos.row(this).data();
+        
+
+ 
         var articuloId = data[0];
          
  
    // Move this line above to define precioCell before using it
-
-   var row =tableArticulosSeleccionados.row.add([
-            data[0],
-            data[1],
-            data[2], 
-            data[3],
-            `<td><input type="number" class="cantidad${articuloId} bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" id="cantidad${articuloId}" name="cantidades[]" value="1" min="1"></td>`,
-            `<td> <select  data-articulo-id="${articuloId}" id="fkTipoVenta' + articuloId + '" name="fkTipoVenta" class="p-2 border border-gray-300 rounded-md placeholder:font-light placeholder:text-gray-500" required> <?php foreach ($datosTipoVenta as $opcion): ?>
-            newRow += '<option value="<?= $opcion->pkTipoVenta ?>"><?= $opcion->nombreTipoVenta ?></option>';
-          <?php endforeach; ?>
->
-newRow += '</select></td>`,
-            `<button class="cancelar-articulo flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400" data-articulo-id="${articuloId}">Cancelar</button>`
-
-        ]).draw();
+   var row = tableArticulosSeleccionados.row.add([
+    data[0],
+    data[1],
+    data[2],
+    data[3],
+ 
+    `<td><input type="number" class="cantidad${articuloId} bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" id="cantidad${articuloId}" name="cantidades[]" value="1" min="1"></td>`,
+   
+    `<td>
+        <select data-articulo-id="${articuloId}" id="fkTipoVenta${articuloId}" name="fkTipoVenta" class="p-2 border border-gray-300 rounded-md placeholder:font-light placeholder:text-gray-500" required>
+            <?php foreach ($datosTipoVenta as $opcion): ?>
+                <option value="<?= $opcion->pkTipoVenta ?>" <?= $opcion->pkTipoVenta == 4 ? 'selected' : '' ?>><?= $opcion->nombreTipoVenta ?></option>
+            <?php endforeach; ?>
+        </select>
+    </td>`,
+    data[5],
+    `<button class="cancelar-articulo flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400" data-articulo-id="${articuloId}">Cancelar</button>`
+]).draw();
     
         actualizarCamposOcultos();
             // Guardar precio original en la estructura de DataTable
         var rowData = row.data();
         rowData.precioOriginal = data[3];
+        rowData.enganche = data[5];
         tipoVentaSeleccionado = tableArticulosSeleccionados.cell({ row: numeroDeFila, column: 5 }).node().getElementsByTagName('select')[0].value;
         // Calcular el total a pagar después de actualizar cantidad y precio
     calcularTotalAPagar();
@@ -525,32 +536,33 @@ $(document).on('change', '[id^="cantidad"]', function () {
 });
 
 
-    $(document).on('change', '[id^="fkTipoVenta"]', function () {
-    var tipoVentaSeleccionado = $(this).val();
-    tipoVentaSelected=$(this).val();
-    var articuloId = $(this).data('articulo-id');
    
-    var fila = $(this).closest('tr');
-    // Obtener referencia al input número
-    var inputCantidad = $('#cantidad' + articuloId); 
-
-    // Asignar valor 1
-    inputCantidad.val(1);
+    $(document).on('change', '[id^="fkTipoVenta"]', function () {
+        var tipoVentaSeleccionado = $(this).val();
+        var articuloId = $(this).data('articulo-id');
+        var fila = $(this).closest('tr');
 
         // Obtiene el número de fila
-        numeroDeFila = tableArticulosSeleccionados.row(fila).index();
-
+        var numeroDeFila = tableArticulosSeleccionados.row(fila).index();
         console.log("Número de fila: " + numeroDeFila);
-        
-    actualizarPrecioYCantidad(articuloId, tipoVentaSeleccionado);
-    calcularTotalAPagar();
-    actualizarCamposOcultos();
-});
+
+        // Obtener referencia al input número
+        var inputCantidad = $('#cantidad' + articuloId);
+
+        // Asignar valor 1
+        inputCantidad.val(1);
+
+        // Actualizar el precio y cantidad
+        actualizarPrecioYCantidad(articuloId, tipoVentaSeleccionado, numeroDeFila);
+        calcularTotalAPagar();
+        actualizarCamposOcultos();
+    });
     $('#articulos-lista tbody').on('click', 'button.cancelar-articulo', function () {
         
-        var filaCancelada = $(this).closest('tr');
+    var filaCancelada = $(this).closest('tr');
     var cantidadCancelada = parseFloat(filaCancelada.find('[id^="cantidad"]').val()) || 0;
     var precioOriginal = parseFloat(tableArticulosSeleccionados.row(filaCancelada).data().precioOriginal) || 0;
+    var enganche1 = parseFloat(tableArticulosSeleccionados.row(filaCancelada).data().enganche) || 0;
 
     // Restar la cantidad cancelada del total
     var totalActual = parseFloat($('.totalPago').text().replace('$', '')) || 0;
@@ -560,7 +572,7 @@ $(document).on('change', '[id^="cantidad"]', function () {
     // Restar la cantidad cancelada del enganche si es aplicable
     if (tipoVentaSelected !== "1") {
         var engancheActual = parseFloat($('.totalEnganche').text().replace('$', '')) || 0;
-        var nuevoEnganche = engancheActual - (cantidadCancelada * (precioOriginal * 0.10));
+        var nuevoEnganche = engancheActual - (cantidadCancelada * enganche1);
         $('.totalEnganche').text('$' + nuevoEnganche.toFixed(2));
     }
 

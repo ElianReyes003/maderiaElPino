@@ -71,19 +71,12 @@
 						<input type="number"   name="precioAlMes" id="" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
 					</div>
 					
-                    <div>
-						<label for="" class="block mb-2 text-sm font-medium text-gray-900">Enganche al mes</label>
-						<input type="number"  name="EngancheprecioAlMes" " id="" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
-					</div>
+
 					<div>
 						<label for="" class="block mb-2 text-sm font-medium text-gray-900">Precio a dos meses</label>
 						<input type="number"  name="precioADosMeses" id="" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
 					</div>
 					
-					<div>
-						<label for="" class="block mb-2 text-sm font-medium text-gray-900">Enganche a dos meses</label>
-						<input type="number" name="EngancheADosMeses" id="" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
-					</div>
 					<div>
 						<label for="" class="block mb-2 text-sm font-medium text-gray-900">Precio a un año </label>
 						<input type="number"  name="precioUnAño" id="" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>

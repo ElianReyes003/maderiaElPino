@@ -234,6 +234,7 @@
                     <th>Precio</th>
                     <th>Ingresa cantidad</th>
                     <th>Tipo de compra</th>
+                    <th>Enganche</th>
                     <th>Cancelar</th>
 				</tr>
 				<tbody id="detalle-articulos-body">
@@ -301,11 +302,16 @@
 
 
 <script>
-    var fila=0;
+   
+
+
+   var fila=0;
     var numeroDeFila=0;
     var precioOriginal=0;
     var tipoVentaSelected = 0;
-   
+    var paraEnganche = 0;
+    var contador=0;
+    var precioAño=0;
     // Función para calcular el precio total
     function calcularPrecioTotal(cantidad) {
         return cantidad * precioOriginal;
@@ -316,31 +322,37 @@
     //SELECCION DE ARTICULO Y LISTA 
 $(document).ready(function () {
 
-  
-   
     function calcularTotalAPagar() {
-    var total = 0;
-    var enganche = 0;
+  var total = 0;
+  var enganche = 0;
+    
+  $('#articulos-lista tbody tr').each(function () {
+    var cantidad = parseFloat($(this).find('[id^="cantidad"]').val()) || 0;
 
-    $('#articulos-lista tbody tr').each(function () {
-        var cantidad = parseFloat($(this).find('[id^="cantidad"]').val()) || 0;
-        var precioOriginal = tableArticulosSeleccionados.row(this).data().precioOriginal;
-        var tipoVenta = $(this).find("[id^=fkTipoVenta]").val();
+    
+    var precioOriginal = tableArticulosSeleccionados.row(this).data().precioOriginal;
+    var enganche1 = tableArticulosSeleccionados.row(this).data().enganche;
+    var tipoVenta = $(this).find("[id^=fkTipoVenta]").val();
 
-        total += isNaN(cantidad) ? 0 : cantidad * precioOriginal;
 
-        if (tipoVenta === "1") {
-            // Si el tipo de venta es 1, el enganche es 0
-            enganche += 0;
-        } else {
-            // De lo contrario, calcula el 10% del precio original como enganche
-            enganche += isNaN(cantidad) ? 0 : cantidad * (precioOriginal * 0.10);
-        }
-    });
+    total += isNaN(cantidad) ? 0 : cantidad * precioOriginal;
+    console.log(precioAño);
+    // Establecer paraEnganche al 10% del precioOriginal si el tipoVenta es 4 (primera vez)
 
-    $('.totalPago').text('$' + total.toFixed(2));
-    $('.totalEnganche').text('$' + enganche.toFixed(2));
+    // Calcular el enganche basado en el valor de paraEnganche
+    if (tipoVenta === "1") {
+      // Si el tipo de venta es 1, el enganche es 0
+      enganche += 0;
+    } else {
+      // De lo contrario, calcular el enganche usando el valor de paraEnganche
+      enganche += isNaN(cantidad) ? 0 : cantidad * enganche1;
+    }
+  });
+
+  $('.totalPago').text('$' + total.toFixed(2));
+  $('.totalEnganche').text('$' + enganche.toFixed(2));
 }
+
 
     calcularTotalAPagar();
     var tableArticulos = $('#tablaArticulos').DataTable({
@@ -415,36 +427,40 @@ $(document).ready(function () {
         $('#fkEstatus, #fkCategoria').val('');
         tableArticulos.search('').columns().search('').draw();
     });
-    
-    $('#tablaArticulos tbody').on('click', 'tr', function () {
+
+     $('#tablaArticulos tbody').on('click', 'tr', function () {
         var checkbox = $(this).find('.seleccionar-articulo');
         checkbox.prop('checked', !checkbox.prop('checked'));
-
+        var tipoVentaSeleccionado = $(this).find("[id^='fkTipoVenta']").val();
         var data = tableArticulos.row(this).data();
         var articuloId = data[0];
-         
+        var fila = $(this); 
  
    // Move this line above to define precioCell before using it
-
-   var row =tableArticulosSeleccionados.row.add([
-            data[0],
-            data[1],
-            data[2], 
-            data[3],
-            `<td><input type="number" class="cantidad${articuloId} bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" id="cantidad${articuloId}" name="cantidades[]" value="1" min="1"></td>`,
-            `<td> <select  data-articulo-id="${articuloId}" id="fkTipoVenta' + articuloId + '" name="fkTipoVenta" class="p-2 border border-gray-300 rounded-md placeholder:font-light placeholder:text-gray-500" required> <?php foreach ($datosTipoVenta as $opcion): ?>
-            newRow += '<option value="<?= $opcion->pkTipoVenta ?>"><?= $opcion->nombreTipoVenta ?></option>';
-          <?php endforeach; ?>
->
-newRow += '</select></td>`,
-            `<button class="cancelar-articulo flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400" data-articulo-id="${articuloId}">Cancelar</button>`
-
-        ]).draw();
+   var row = tableArticulosSeleccionados.row.add([
+    data[0],
+    data[1],
+    data[2],
+    data[3],
+ 
+    `<td><input type="number" class="cantidad${articuloId} bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" id="cantidad${articuloId}" name="cantidades[]" value="1" min="1"></td>`,
+   
+    `<td>
+        <select data-articulo-id="${articuloId}" id="fkTipoVenta${articuloId}" name="fkTipoVenta" class="p-2 border border-gray-300 rounded-md placeholder:font-light placeholder:text-gray-500" required>
+            <?php foreach ($datosTipoVenta as $opcion): ?>
+                <option value="<?= $opcion->pkTipoVenta ?>" <?= $opcion->pkTipoVenta == 4 ? 'selected' : '' ?>><?= $opcion->nombreTipoVenta ?></option>
+            <?php endforeach; ?>
+        </select>
+    </td>`,
+    data[5],
+    `<button class="cancelar-articulo flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400" data-articulo-id="${articuloId}">Cancelar</button>`
+]).draw();
     
         actualizarCamposOcultos();
             // Guardar precio original en la estructura de DataTable
         var rowData = row.data();
         rowData.precioOriginal = data[3];
+        rowData.enganche = data[5];
         tipoVentaSeleccionado = tableArticulosSeleccionados.cell({ row: numeroDeFila, column: 5 }).node().getElementsByTagName('select')[0].value;
         // Calcular el total a pagar después de actualizar cantidad y precio
     calcularTotalAPagar();
@@ -502,32 +518,33 @@ $(document).on('change', '[id^="cantidad"]', function () {
 });
 
 
-    $(document).on('change', '[id^="fkTipoVenta"]', function () {
-    var tipoVentaSeleccionado = $(this).val();
-    tipoVentaSelected=$(this).val();
-    var articuloId = $(this).data('articulo-id');
    
-    var fila = $(this).closest('tr');
-    // Obtener referencia al input número
-    var inputCantidad = $('#cantidad' + articuloId); 
-
-    // Asignar valor 1
-    inputCantidad.val(1);
+    $(document).on('change', '[id^="fkTipoVenta"]', function () {
+        var tipoVentaSeleccionado = $(this).val();
+        var articuloId = $(this).data('articulo-id');
+        var fila = $(this).closest('tr');
 
         // Obtiene el número de fila
-        numeroDeFila = tableArticulosSeleccionados.row(fila).index();
-
+        var numeroDeFila = tableArticulosSeleccionados.row(fila).index();
         console.log("Número de fila: " + numeroDeFila);
-        
-    actualizarPrecioYCantidad(articuloId, tipoVentaSeleccionado);
-    calcularTotalAPagar();
-    actualizarCamposOcultos();
-});
+
+        // Obtener referencia al input número
+        var inputCantidad = $('#cantidad' + articuloId);
+
+        // Asignar valor 1
+        inputCantidad.val(1);
+
+        // Actualizar el precio y cantidad
+        actualizarPrecioYCantidad(articuloId, tipoVentaSeleccionado, numeroDeFila);
+        calcularTotalAPagar();
+        actualizarCamposOcultos();
+    });
     $('#articulos-lista tbody').on('click', 'button.cancelar-articulo', function () {
         
-        var filaCancelada = $(this).closest('tr');
+    var filaCancelada = $(this).closest('tr');
     var cantidadCancelada = parseFloat(filaCancelada.find('[id^="cantidad"]').val()) || 0;
     var precioOriginal = parseFloat(tableArticulosSeleccionados.row(filaCancelada).data().precioOriginal) || 0;
+    var enganche1 = parseFloat(tableArticulosSeleccionados.row(filaCancelada).data().enganche) || 0;
 
     // Restar la cantidad cancelada del total
     var totalActual = parseFloat($('.totalPago').text().replace('$', '')) || 0;
@@ -537,7 +554,7 @@ $(document).on('change', '[id^="cantidad"]', function () {
     // Restar la cantidad cancelada del enganche si es aplicable
     if (tipoVentaSelected !== "1") {
         var engancheActual = parseFloat($('.totalEnganche').text().replace('$', '')) || 0;
-        var nuevoEnganche = engancheActual - (cantidadCancelada * (precioOriginal * 0.10));
+        var nuevoEnganche = engancheActual - (cantidadCancelada * enganche1);
         $('.totalEnganche').text('$' + nuevoEnganche.toFixed(2));
     }
 
@@ -549,11 +566,6 @@ $(document).on('change', '[id^="cantidad"]', function () {
         
       
     });
-
-
- 
-   
-
 
     function actualizarPrecioYCantidad(articuloId, tipoVentaSeleccionado) {
     $.ajax({
@@ -700,3 +712,15 @@ $('#completar').click(function () {
         }   
 	 </style>
 </body>
+
+
+
+
+
+
+
+
+
+
+
+

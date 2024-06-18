@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('folioAbono', 20);
             $table->unsignedBigInteger('fkComprasCliente');
             $table->foreign("fkComprasCliente")->references("pkComprasCliente")->on("comprasCliente");
+            $table->unsignedBigInteger('fkConcepto');
+            $table->foreign('fkConcepto')->references('pkConcepto')->on('concepto');
             $table->unsignedBigInteger('fkEmpleado');
             $table->foreign("fkEmpleado")->references("pkEmpleado")->on("empleado");
             $table->smallInteger("estatus");

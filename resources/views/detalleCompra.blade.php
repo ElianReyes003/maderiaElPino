@@ -1,343 +1,396 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maderas El Pino</title>
-    <link href="{{ asset('images/elpino.ico') }}" rel="icon" type="image/x-icon">
-    <style>
-        div.container { 
-            max-width: 1200px;
-        }
-        .dataTables_wrapper .dataTables_filter {
-            display: none;
-        }
-        .dataTables_wrapper .dataTables_length select {
-            border: 1px solid #aaa;
-            border-radius: 3px;
-            padding: 5px;
-            background-color: transparent;
-            color: inherit;
-            padding: 4px;
-            width: 60px;
-            margin-bottom: 20px;
-        }
-    </style>
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.5/pagination.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/plug-ins/1.13.6/api/fnMultiFilter.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Maderas El Pino</title>
+	<link href="{{ asset('images/elpino.ico') }}" rel="icon" type="image/x-icon">
+	<style>
+		div.container {
+			max-width: 1200px;
+		}
+
+		.dataTables_wrapper .dataTables_filter {
+			display: none;
+		}
+
+		.dataTables_wrapper .dataTables_length select {
+			border: 1px solid #aaa;
+			border-radius: 3px;
+			padding: 5px;
+			background-color: transparent;
+			color: inherit;
+			padding: 4px;
+			width: 60px;
+			margin-bottom: 20px;
+		}
+	</style>
+	<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.5/pagination.min.js"></script>
+	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/plug-ins/1.13.6/api/fnMultiFilter.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 </head>
+
 <body>
-@if(session('id'))
-    @if(session('fkTipoUsuario')==1)
-        @include("sidebar")
-        <!-- El resto de tu contenido aquí... -->
-    @else
-        <script>
-            window.location.href="{{url('/')}}";
-        </script>
-    @endif
-@else
-    <script>
-        window.location.href="{{url('/')}}";
-    </script>
-@endif
+	@if(session('id'))
+	@if(session('fkTipoUsuario')==1)
+	@include("sidebar")
+	<!-- El resto de tu contenido aquí... -->
+	@else
+	<script>
+		window.location.href = "{{url('/')}}";
+	</script>
+	@endif
+	@else
+	<script>
+		window.location.href = "{{url('/')}}";
+	</script>
+	@endif
 
 
-<div class="p-4 sm:ml-64 mt-16 md:mt-10">
-        <!-- Guias del tamaño del contenedor -->
-        <div class="p-4">	
-           <!-- PON EL CODIGO DEL MODULO AQUI-->
-		   <div class="bg-white rounded-lg shadow-lg p-4">
-			<div class="flex justify-start">
-				<a href="{{ url()->previous() }}" class="flex items-center bg-green-500 p-2 text-base font-medium text-white rounded-lg hover:bg-green-400">
-					Regresar
-                </a>
-			</div>
-            <h1 class="text-center font-bold text-2xl p-5">{{$compra->nombreCliente}}</h1>
-                <div>
-                    <div class="flex justify-center font-semibold"><h2>Domicilio: <h3 class="ml-2"> {{ $compra->nombreMunicipio }} {{ $compra->nombreColonia }} {{ $compra->nombreCalle }}{{ $compra->numCasa }}</h3></h2></div>
-                    <div class="flex justify-center font-semibold"><h2>Descripcion Domicilio: <h3 class="ml-2">{{$compra->descripcionDomicilio}}</h3></h2></div>   
-                    <div class="flex justify-center font-semibold"><h2>Telefono: <h3 class="ml-2">{{$compra->telefono}}</h3></h2></div>             
-                </div>
-           </div>
-        </div>
-    </div>
-    <div class="p-4 sm:ml-64">
-        <!-- Guias del tamaño del contenedor -->
-        <div class="p-4">
-           <!-- PON EL CODIGO DEL MODULO AQUI-->
-		   <div class="bg-white rounded-lg shadow-lg p-4">
-            <h1 class="text-center font-bold text-2xl">Compra</h1>
-                <div class="mt-10">
-                @php
-        use App\Models\tipoVenta;
-        $datosVenta = tipoVenta::all();
-    @endphp
-                @if(session('fkTipoUsuario') == 1)	
-  
+	<div class="p-4 sm:ml-64 mt-16 md:mt-10">
+		<!-- Guias del tamaño del contenedor -->
+		<div class="p-4">
+			<!-- PON EL CODIGO DEL MODULO AQUI-->
 			<div class="bg-white rounded-lg shadow-lg p-4">
-			<form id="formulario" action="{{ route('compra.actualizar', ['pkCompra' => $compra->pkcomprasCliente]) }}" enctype="multipart/form-data"  method="post">
-					@csrf 
-					<div class="ml-2 p-2 pt-5 mt-10">
-					<h2 class="font-semibold text-2xl text-center">Actualizar Compra  </h2>
-						<div class="grid grid-cols-1 gap-4 text-justify">
-							<div class="p-2">
-								<label for="" class="block mb-2 text-sm font-medium text-gray-900">Tiempo De Pago</label>
-								<div>
-									<select name="fkTipoVenta" id="tipoVenta" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
-										<option value="">Selecciona Tipo de Venta</option>
-										@foreach ($datosVenta as $ventita)
-											<option {{ $ventita->pkTipoVenta == $compra->pkTipoVenta ? 'selected' : '' }} value="{{ $ventita->pkTipoVenta }}">
-												{{ $ventita->nombreTipoVenta }}
-											</option>
-										@endforeach
-									</select>
-								</div>
-							</div>
-							<input type="hidden" value="{{$compra->pkArticulo}}" name="articulito">
-							<div class="p-2">
-								<label for="" class="block mb-2 text-sm font-medium text-gray-900">Semanas de deuda</label>
-								<input type="number" value="{{$compra->diasDeuda}}" name="deuda" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
-							</div>
-							<div class="p-2">
-								<div class="p-2">
-									<label for="" class="block mb-2 text-sm font-medium text-gray-900">Cantidad a Saldar</label>
-									<input type="number" value="{{$compra->cantidadASaldar}}" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" name="saldar">								
-								</div>
-								<div class="p-2">
-									<label for="underline_select" class="sr-only">Selecciona estatus</label>
-									<select name="estatus" id="estatus" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
-										@foreach ([1, 0, 2] as $valor)
-											<option value="{{ $valor }}" {{ $compra->ESTATUSCOMPRA == $valor ? 'selected' : '' }}>
-												@if ($valor === 1)
+				<div class="flex justify-start">
+					<a href="{{ url()->previous() }}" class="flex items-center bg-green-500 p-2 text-base font-medium text-white rounded-lg hover:bg-green-400">
+						Regresar
+					</a>
+				</div>
+				<h1 class="text-center font-bold text-2xl p-5">{{$compra->nombreCliente}}</h1>
+				<div>
+					<div class="flex justify-center font-semibold">
+						<h2>Domicilio: <h3 class="ml-2"> {{ $compra->nombreMunicipio }} {{ $compra->nombreColonia }} {{ $compra->nombreCalle }}{{ $compra->numCasa }}</h3>
+						</h2>
+					</div>
+					<div class="flex justify-center font-semibold">
+						<h2>Descripcion Domicilio: <h3 class="ml-2">{{$compra->descripcionDomicilio}}</h3>
+						</h2>
+					</div>
+					<div class="flex justify-center font-semibold">
+						<h2>Telefono: <h3 class="ml-2">{{$compra->telefono}}</h3>
+						</h2>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="p-4 sm:ml-64">
+		<!-- Guias del tamaño del contenedor -->
+		<div class="p-4">
+			<!-- PON EL CODIGO DEL MODULO AQUI-->
+			<div class="bg-white rounded-lg shadow-lg p-4">
+				<h1 class="text-center font-bold text-2xl">Compra</h1>
+				<div class="mt-10">
+					@php
+					use App\Models\tipoVenta;
+					$datosVenta = tipoVenta::all();
+					@endphp
+					@if(session('fkTipoUsuario') == 1)
+
+					<div class="bg-white rounded-lg shadow-lg p-4">
+						<form id="formulario" action="{{ route('compra.actualizar', ['pkCompra' => $compra->pkcomprasCliente]) }}" enctype="multipart/form-data" method="post">
+							@csrf
+							<div class="ml-2 p-2 pt-5 mt-10">
+								<h2 class="font-semibold text-2xl text-center">Actualizar Compra </h2>
+								<div class="grid grid-cols-1 gap-4 text-justify">
+									<div class="p-2">
+										<label for="" class="block mb-2 text-sm font-medium text-gray-900">Tiempo De Pago</label>
+										<div>
+											<select name="fkTipoVenta" id="tipoVenta" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
+												<option value="">Selecciona Tipo de Venta</option>
+												@foreach ($datosVenta as $ventita)
+												<option {{ $ventita->pkTipoVenta == $compra->pkTipoVenta ? 'selected' : '' }} value="{{ $ventita->pkTipoVenta }}">
+													{{ $ventita->nombreTipoVenta }}
+												</option>
+												@endforeach
+											</select>
+										</div>
+									</div>
+									<input type="hidden" value="{{$compra->pkArticulo}}" name="articulito">
+									<div class="p-2">
+										<label for="" class="block mb-2 text-sm font-medium text-gray-900">Semanas de deuda</label>
+										<input type="number" value="{{$compra->diasDeuda}}" name="deuda" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
+									</div>
+									<div class="p-2">
+										<div class="p-2">
+											<label for="" class="block mb-2 text-sm font-medium text-gray-900">Cantidad a Saldar</label>
+											<input type="number" value="{{$compra->cantidadASaldar}}" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" name="saldar">
+										</div>
+										<div class="p-2">
+											<label for="underline_select" class="sr-only">Selecciona estatus</label>
+											<select name="estatus" id="estatus" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
+												@foreach ([1, 0, 2] as $valor)
+												<option value="{{ $valor }}" {{ $compra->ESTATUSCOMPRA == $valor ? 'selected' : '' }}>
+													@if ($valor === 1)
 													Pago Pendiente
-												@elseif ($valor === 0)
+													@elseif ($valor === 0)
 													Pago Completado
-												@else
+													@else
 													Pago Vencido
-												@endif
-											</option>
-										@endforeach
-									</select>
+													@endif
+												</option>
+												@endforeach
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="flex md:justify-end justify-center">
+									<div class="mt-5 flex md:justify-end justify-center">
+										<button type="submit" class="w-full flex items-center bg-green-500 p-2 text-base font-medium text-white rounded-lg hover:bg-green-400">
+											<svg class="flex-shrink-0 w-7 h-7 text-white transition duration-75 group-hover:text-green-" width="800px" height="800px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+												<path d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm6.4350288 11.7071068c-.3905242-.3905243-1.0236892-.3905243-1.4142135 0l-6.3646682 6.3632539-3.5348268-3.5348268c-.3905242-.3905243-1.0236892-.3905243-1.41421352 0-.39052429.3905243-.39052429 1.0236893 0 1.4142136l4.24264072 4.2426407c.3905243.3905242 1.0236892.3905242 1.4142135 0 .0040531-.0040531.0080641-.0081323.012033-.0122371l7.0590348-7.0588308c.3905243-.3905242.3905243-1.0236892 0-1.4142135z" fill="currentColor" fill-rule="evenodd" />
+											</svg>
+											<p class="flex-1 ms-3 whitespace-nowrap">Aplicar</p>
+										</button>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div class="flex md:justify-end justify-center">
-							<div class="mt-5 flex md:justify-end justify-center">
-								<button type="submit" class="w-full flex items-center bg-green-500 p-2 text-base font-medium text-white rounded-lg hover:bg-green-400">
-										<svg class="flex-shrink-0 w-7 h-7 text-white transition duration-75 group-hover:text-green-" width="800px" height="800px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-											<path d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm6.4350288 11.7071068c-.3905242-.3905243-1.0236892-.3905243-1.4142135 0l-6.3646682 6.3632539-3.5348268-3.5348268c-.3905242-.3905243-1.0236892-.3905243-1.41421352 0-.39052429.3905243-.39052429 1.0236893 0 1.4142136l4.24264072 4.2426407c.3905243.3905242 1.0236892.3905242 1.4142135 0 .0040531-.0040531.0080641-.0081323.012033-.0122371l7.0590348-7.0588308c.3905243-.3905242.3905243-1.0236892 0-1.4142135z" fill="currentColor" fill-rule="evenodd"/>
-										</svg>
-									<p class="flex-1 ms-3 whitespace-nowrap">Aplicar</p>
-								</button>	
+						</form>
+					</div>
+					@endif
+
+
+					<div class="grid grid-cols-2 text-justify mt-10">
+						<h2 class="font-semibold">Fecha: 
+							<p class="font-normal">{{$compra->fecha}}</p>
+						</h2>
+						<h2 class="font-semibold md:ml-[20rem] ml-10">Tiempo de pago: 
+							<p class="font-normal"> @if($compra->pkTipoVenta == 1)
+								Al contado
+								@elseif($compra->pkTipoVenta == 2)
+								Al Mes
+								@elseif($compra->pkTipoVenta == 3)
+								A dos meses
+
+								@elseif($compra->pkTipoVenta == 4)
+								A un Año
+								@endif
+							</p>
+						</h2>
+						<h2 class="font-semibold ">Por saldar: 
+							<p class="font-normal">{{$compra->cantidadASaldar}}</p>
+						</h2>
+						<h2 class="font-semibold md:ml-[20rem] ml-10">Semanas Deuda: 
+							<p class="font-normal">{{$compra->diasDeuda}}</p>
+						</h2>
+						<h2 class="font-semibold">Articulo(s): 
+							<p class="font-normal">{{$compra->nombreArticulo}}</p>
+						</h2>
+						<h2 class="font-semibold md:ml-[20rem] ml-10">Enganche:
+							<p class="font-normal">{{$compra->enganche}}</p>
+						</h2>
+						<h2 class="font-semibold">Valor: 
+							<p class="font-normal">{{$compra->cantidadTipoVenta}}</p>
+						</h2>
+						<h2 class="font-semibold md:ml-[20rem] ml-10">Folio: 
+							<p class="font-normal">{{$compra->folioCompra}}</p>
+						</h2>
+						<h2 class="font-semibold">Estatus: 
+							<p class="font-normal">
+								@if($compra->ESTATUSCOMPRA == 1)
+								Pago pendiente
+								@elseif($compra->ESTATUSCOMPRA == 2)
+								Vencido
+								@else
+								Pago completado
+								@endif
+							</p>
+						</h2>
+					</div>
+				</div>
+				<div class="grid grid-cols-1 md:grid-cols-3 mt-10 border border-gray-200 p-5 rounded-lg">
+					<div class="flex justify-center">
+						<div class="mt-5 md:-mt-0">
+							<div>
+								<h1>Cada 8 dias</h1>
+							</div>
+							<div class="text-center">
+								<p>100</p>
 							</div>
 						</div>
 					</div>
-				</form>
-			</div>
-@endif
-
-
-                    <div class="grid grid-cols-2 text-justify mt-10">
-                        <h2 class="font-semibold">Fecha: <p class="font-normal">{{$compra->fecha}}</p></h2>
-                        <h2 class="font-semibold  md:ml-[20rem] ml-10">Tiempo de pago: <p class="font-normal"> @if($compra->pkTipoVenta == 1)
-                                    Al contado
-                                @elseif($compra->pkTipoVenta == 2)
-                                    Al Mes
-                                @elseif($compra->pkTipoVenta == 3)
-                                    A dos meses
-                               
-                                @elseif($compra->pkTipoVenta == 4)
-                                    A un Año
-                                @endif
-                            
-                            </p></h2>
-                        <h2 class="font-semibold ">Por saldar: <p class="font-normal">{{$compra->cantidadASaldar}}</p></h2>
-                        <h2 class="font-semibold md:ml-[20rem] ml-10">Semanas Deuda: <p class="font-normal">{{$compra->diasDeuda}}</p></h2>
-                        <h2 class="font-semibold">Articulo(s): <p class="font-normal">{{$compra->nombreArticulo}}</p></h2>
-                        <h2 class="font-semibold md:ml-[20rem] ml-10">Enganche: <p class="font-normal">{{$compra->enganche}}</p></h2>
-                        <h2 class="font-semibold">Valor: <p class="font-normal">{{$compra->cantidadTipoVenta}}</p></h2>
-                        <h2 class="font-semibold md:ml-[20rem] ml-10">Folio: <p class="font-normal">{{$compra->folioCompra}}</p></h2>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 mt-10 border border-gray-200 p-5 rounded-lg">
-                    <div class="flex justify-center">
-                        <div class="mt-5 md:-mt-0">
-                            <div><h1>Cada 8 dias</h1></div>
-                            <div class="text-center"><p>100</p></div>
-                        </div>
-                    </div>
-                    <div class="flex justify-center mt-5 md:-mt-0">
-                        <div class="">
-                            <div><h1>Cada 8 dias</h1></div>
-                            <div class="text-center"><p>100</p></div>
-                        </div>
-                    </div>
-                    <div class="flex justify-center mt-5 md:-mt-0">
-                        <div class="">
-                            <div><h1>Cada 8 dias</h1></div>
-                            <div class="text-center"><p>100</p></div>
-                        </div>
-                    </div>
-                </div>
+					<div class="flex justify-center mt-5 md:-mt-0">
+						<div class="">
+							<div>
+								<h1>Cada 8 dias</h1>
+							</div>
+							<div class="text-center">
+								<p>100</p>
+							</div>
+						</div>
+					</div>
+					<div class="flex justify-center mt-5 md:-mt-0">
+						<div class="">
+							<div>
+								<h1>Cada 8 dias</h1>
+							</div>
+							<div class="text-center">
+								<p>100</p>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="flex mt-5 justify-start">
 					<div class="md:mt-5">
 						<a href="{{ route('cliente.abonos', ['pkCompra' => $compra->pkComprasCliente, 'vista' => 'formularioAbono']) }}" class="w-full flex items-center bg-green-500 p-2 text-base font-medium text-white rounded-lg hover:bg-green-400">
-							<svg class="flex-shrink-0 w-7 h-7 text-white transition duration-75 group-hover:text-green-" fill="currentColor" width="800px" height="800px" viewBox="-2 0 19 19" xmlns="http://www.w3.org/2000/svg" class="cf-icon-svg"><path d="M13.112 7.798a1.112 1.112 0 0 1 1.108 1.108v.674a1.112 1.112 0 0 1-1.108 1.108h-.52a4.657 4.657 0 0 1-1.134 1.848q-.118.117-.243.226v1.966a.476.476 0 0 1-.475.475H9.281a.476.476 0 0 1-.475-.475v-.873a4.664 4.664 0 0 1-.64.044H6.212a4.664 4.664 0 0 1-.641-.044v.873a.476.476 0 0 1-.475.475H3.637a.476.476 0 0 1-.475-.475v-1.966q-.125-.109-.243-.226a4.656 4.656 0 0 1-1.275-2.39.904.904 0 0 1 0-1.806 4.656 4.656 0 0 1 4.568-3.754h1.954a4.653 4.653 0 0 1 .939.096l2.545-1.481a.253.253 0 0 1 .378.25.256.256 0 0 1-.027.087 4.345 4.345 0 0 0-.47 2.486 4.657 4.657 0 0 1 1.061 1.774h.52zM9.037 5.876a.475.475 0 0 0-.475-.475H5.984a.475.475 0 1 0 0 .95h2.578a.475.475 0 0 0 .475-.475zm-.248 5.141a1.142 1.142 0 0 0-.283-.75 1.533 1.533 0 0 0-.426-.34 1.792 1.792 0 0 0-.441-.16 1.924 1.924 0 0 0-.405-.041 1.475 1.475 0 0 1-.245-.02.936.936 0 0 1-.256-.082.606.606 0 0 1-.193-.155.385.385 0 0 1-.091-.232.392.392 0 0 1 .22-.329 1.114 1.114 0 0 1 .571-.153 1.168 1.168 0 0 1 .203.033l.024.006a1.28 1.28 0 0 1 .244.085.683.683 0 0 1 .198.136.396.396 0 1 0 .56-.561 1.477 1.477 0 0 0-.433-.297 2.035 2.035 0 0 0-.4-.137l-.011-.002v-.3a.396.396 0 0 0-.792 0v.288a1.813 1.813 0 0 0-.588.233 1.182 1.182 0 0 0-.588.998 1.166 1.166 0 0 0 .268.731 1.388 1.388 0 0 0 .454.364 1.71 1.71 0 0 0 .48.156 2.262 2.262 0 0 0 .375.03 1.128 1.128 0 0 1 .237.023.975.975 0 0 1 .24.087.746.746 0 0 1 .2.16.355.355 0 0 1 .086.229c0 .051 0 .17-.2.3a1.128 1.128 0 0 1-.585.163 1.832 1.832 0 0 1-.254-.031 1.24 1.24 0 0 1-.237-.076.497.497 0 0 1-.186-.143.396.396 0 0 0-.599.518 1.276 1.276 0 0 0 .49.36 1.926 1.926 0 0 0 .396.12l.01.003v.295a.396.396 0 1 0 .793 0v-.3a1.827 1.827 0 0 0 .602-.244 1.125 1.125 0 0 0 .562-.965z"/></svg>
+							<svg class="flex-shrink-0 w-7 h-7 text-white transition duration-75 group-hover:text-green-" fill="currentColor" width="800px" height="800px" viewBox="-2 0 19 19" xmlns="http://www.w3.org/2000/svg" class="cf-icon-svg">
+								<path d="M13.112 7.798a1.112 1.112 0 0 1 1.108 1.108v.674a1.112 1.112 0 0 1-1.108 1.108h-.52a4.657 4.657 0 0 1-1.134 1.848q-.118.117-.243.226v1.966a.476.476 0 0 1-.475.475H9.281a.476.476 0 0 1-.475-.475v-.873a4.664 4.664 0 0 1-.64.044H6.212a4.664 4.664 0 0 1-.641-.044v.873a.476.476 0 0 1-.475.475H3.637a.476.476 0 0 1-.475-.475v-1.966q-.125-.109-.243-.226a4.656 4.656 0 0 1-1.275-2.39.904.904 0 0 1 0-1.806 4.656 4.656 0 0 1 4.568-3.754h1.954a4.653 4.653 0 0 1 .939.096l2.545-1.481a.253.253 0 0 1 .378.25.256.256 0 0 1-.027.087 4.345 4.345 0 0 0-.47 2.486 4.657 4.657 0 0 1 1.061 1.774h.52zM9.037 5.876a.475.475 0 0 0-.475-.475H5.984a.475.475 0 1 0 0 .95h2.578a.475.475 0 0 0 .475-.475zm-.248 5.141a1.142 1.142 0 0 0-.283-.75 1.533 1.533 0 0 0-.426-.34 1.792 1.792 0 0 0-.441-.16 1.924 1.924 0 0 0-.405-.041 1.475 1.475 0 0 1-.245-.02.936.936 0 0 1-.256-.082.606.606 0 0 1-.193-.155.385.385 0 0 1-.091-.232.392.392 0 0 1 .22-.329 1.114 1.114 0 0 1 .571-.153 1.168 1.168 0 0 1 .203.033l.024.006a1.28 1.28 0 0 1 .244.085.683.683 0 0 1 .198.136.396.396 0 1 0 .56-.561 1.477 1.477 0 0 0-.433-.297 2.035 2.035 0 0 0-.4-.137l-.011-.002v-.3a.396.396 0 0 0-.792 0v.288a1.813 1.813 0 0 0-.588.233 1.182 1.182 0 0 0-.588.998 1.166 1.166 0 0 0 .268.731 1.388 1.388 0 0 0 .454.364 1.71 1.71 0 0 0 .48.156 2.262 2.262 0 0 0 .375.03 1.128 1.128 0 0 1 .237.023.975.975 0 0 1 .24.087.746.746 0 0 1 .2.16.355.355 0 0 1 .086.229c0 .051 0 .17-.2.3a1.128 1.128 0 0 1-.585.163 1.832 1.832 0 0 1-.254-.031 1.24 1.24 0 0 1-.237-.076.497.497 0 0 1-.186-.143.396.396 0 0 0-.599.518 1.276 1.276 0 0 0 .49.36 1.926 1.926 0 0 0 .396.12l.01.003v.295a.396.396 0 1 0 .793 0v-.3a1.827 1.827 0 0 0 .602-.244 1.125 1.125 0 0 0 .562-.965z" />
+							</svg>
 							<p class="flex-1 ms-3 whitespace-nowrap">Abonar</p>
-						</a>	
+						</a>
 					</div>
-            	</div>
-            </div>
-        </div>
-     </div>
-           </div>
-        </div>
-    </div>
-    <div class="p-4 sm:ml-64">
-        <!-- Guias del tamaño del contenedor -->
-        <div class="p-4">
-           <!-- PON EL CODIGO DEL MODULO AQUI-->
-		   <div class="bg-white rounded-lg shadow-lg">
-			<div class="flex justify-center mb-[1rem]">
+				</div>
 			</div>
-            <div>
-               
-                <div class="p-5">
-                    <div class="flex justify-center md:justify-normal items-center mt-8">
-                        <form class="w-[13rem] md:w-[30rem]">   
-                            <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                                    </svg>
-                                </div>
-                                <input id="busqueda" name="busqueda"  class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-400 focus:border-green-400" placeholder="Buscar" required>
-                            </div>
-                        </form>
-                     </div>
-                     <div class="grid grid-cols-1 gap-4 mt-10">
-                        <div class="relative w-full">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-                            </svg>
-                            </div>
-                            <input datepicker type="date" id="dia" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full ps-10 p-2.5" placeholder="Fecha">
-                        </div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	<div class="p-4 sm:ml-64">
+		<!-- Guias del tamaño del contenedor -->
+		<div class="p-4">
+			<!-- PON EL CODIGO DEL MODULO AQUI-->
+			<div class="bg-white rounded-lg shadow-lg">
+				<div class="flex justify-center mb-[1rem]">
+				</div>
+				<div>
 
-						<div class="relative w-full">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-                            </svg>
-                            </div>
-							<input datepicker  type="date" id="mes"class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full ps-10 p-2.5" placeholder="Fecha">
-                        </div>
-                        <label for="underline_select" class="sr-only">Cobrador</label>
-                        <select name="cobrador" id="cobrador" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
-                        @php
-                            use App\Models\Empleado;
-                            $datosEmpleado=Empleado::all();
-                        @endphp
-                        <option value="">Selecciona Municipio</option>
-                        @foreach ($datosEmpleado as $dato)
-                            <option value="{{$dato->nombreEmpleado}}">{{$dato->nombreEmpleado}}</option>
-                        @endforeach
-                        </select>
-						<div class="flex mt-3">
-                        	<button  type="button"id="limpiarFiltros"  class="limpiarFiltros flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
-                                Limpiar filtros
-                        </button>
-                    </div>
-                     </div>
-                </div>
-            </div>
-			<div class="flex justify-end mt-5">
-				<button id="imprimir"class="flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
-					imprimir
-				</button>
-			</div>
-            <table  id="tablaAbonos" class="tablaCompras" class="w-full table-auto mt-[1rem]" id="miTabla" class="display nowrap" width="90%">
-				<thead class="text-center">
-					<tr class="h-24 text-center">
-						<th>Fecha</th>
-                        <th>Folio</th>
-                        <th>Abono</th>
-                        <th>Saldo</th>
-                        <th>Cobrador</th>
-					</tr>
-					<tbody>
-                    @foreach ($abonos as $dato )
-						<tr class="h-20">
-                        <td>{{$dato->FECHAABONO}}</td>
-                        <td>{{$dato->folioAbono}}</td>
-                        <td>{{$dato->abono}}</td>
-                        <td>{{$dato->Saldo}}</td>
-                        <td>
-                        {{$dato->nombreEmpleado}}
-                        </td>
-            
+					<div class="p-5">
+						<div class="flex justify-center md:justify-normal items-center mt-8">
+							<form class="w-[13rem] md:w-[30rem]">
+								<label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+								<div class="relative">
+									<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+										<svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+											<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+										</svg>
+									</div>
+									<input id="busqueda" name="busqueda" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-400 focus:border-green-400" placeholder="Buscar" required>
+								</div>
+							</form>
+						</div>
+						<div class="grid grid-cols-1 gap-4 mt-10">
+							<div class="relative w-full">
+								<div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+									<svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+										<path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+									</svg>
+								</div>
+								<input datepicker type="date" id="dia" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full ps-10 p-2.5" placeholder="Fecha">
+							</div>
+
+							<div class="relative w-full">
+								<div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+									<svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+										<path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+									</svg>
+								</div>
+								<input datepicker type="date" id="mes" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full ps-10 p-2.5" placeholder="Fecha">
+							</div>
+							<label for="underline_select" class="sr-only">Cobrador</label>
+							<select name="cobrador" id="cobrador" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
+								@php
+								use App\Models\Empleado;
+								$datosEmpleado=Empleado::all();
+								@endphp
+								<option value="">Selecciona Municipio</option>
+								@foreach ($datosEmpleado as $dato)
+								<option value="{{$dato->nombreEmpleado}}">{{$dato->nombreEmpleado}}</option>
+								@endforeach
+							</select>
+							<div class="flex mt-3">
+								<button type="button" id="limpiarFiltros" class="limpiarFiltros flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+									Limpiar filtros
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="flex justify-end mt-5">
+					<button id="imprimir" class="flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+						imprimir
+					</button>
+				</div>
+				<table id="tablaAbonos" class="tablaCompras" class="w-full table-auto mt-[1rem]" id="miTabla" class="display nowrap" width="90%">
+					<thead class="text-center">
+						<tr class="h-24 text-center">
+							<th>Fecha</th>
+							<th>Folio</th>
+							<th>Abono</th>
+							<th>Saldo</th>
+							<th>Cobrador</th>
 						</tr>
-                    @endforeach
+					<tbody>
+						@foreach ($abonos as $dato )
+						<tr class="h-20">
+							<td>{{$dato->FECHAABONO}}</td>
+							<td>{{$dato->folioAbono}}</td>
+							<td>{{$dato->abono}}</td>
+							<td>{{$dato->Saldo}}</td>
+							<td>
+								{{$dato->nombreEmpleado}}
+							</td>
+
+						</tr>
+						@endforeach
 					</tbody>
 					</thead>
 				</table>
 				<div class="flex justify-center	mt-16">
 					<div class="md:p-10 p-5">
-						  <div class="flex">
+						<div class="flex">
 							<!-- Previous Button -->
-							<button id="previousBtn"class="flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
-							  Anterior
+							<button id="previousBtn" class="flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+								Anterior
 							</button>
 							<!-- Next Button -->
-							<button id="nextBtn"  class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
-							  Siguiente
+							<button id="nextBtn" class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+								Siguiente
 							</button>
-						  </div>
+						</div>
 					</div>
 				</div>
 			</div>
-        </div>
-     </div>
-   <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
-   <script src="../node_modules/flowbite/dist/datepicker.js"></script>
-   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-   <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+		</div>
+	</div>
+	<script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
+	<script src="../node_modules/flowbite/dist/datepicker.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
-   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        $('#imprimir').on('click', function() {
-            // Abre una nueva ventana para imprimir
-            var printWindow = window.open('', '_blank');
-            printWindow.document.write('<!DOCTYPE html>');
-        printWindow.document.write('<html><head>');
-        printWindow.document.write('<title>Imprimir</title>');
-        printWindow.document.write('<style>');
-        // Estilos generales
-        printWindow.document.write('body { font-family: Arial, sans-serif; color: #333; }');
-        printWindow.document.write('.container { max-width: 800px; margin: 0 auto; padding: 20px; border: 2px solid #0E9F6E; border-radius: 10px; background-color: #f9f9f9; }');
-        printWindow.document.write('.header { text-align: center; font-size: 10px; margin-bottom: 10px; color: black; }');
-        printWindow.document.write('.info { border: 2px solid #0E9F6E; padding: 10px; margin-bottom: 20px; border-radius: 10px; background-color: #fff; }');
-        printWindow.document.write('.info p { margin: 5px 0; }');
-        printWindow.document.write('table { width: 100%; border-collapse: collapse; border: 2px solid #0E9F6E; border-radius: 10px; background-color: #fff; }');
-        printWindow.document.write('table, th, td { border: 1px solid #ddd; padding: 8px; }');
-        printWindow.document.write('th, td { text-align: left; }');
-        // Estilos específicos
-        printWindow.document.write('.highlight { color: black; }');
-        printWindow.document.write('.svg-container { position: absolute; top: 20px; left: 20px; }');
-        printWindow.document.write('</style>');
-        printWindow.document.write('</head><body>');
-        printWindow.document.write('<div class="container">');
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			$('#imprimir').on('click', function() {
+				// Abre una nueva ventana para imprimir
+				var printWindow = window.open('', '_blank');
+				printWindow.document.write('<!DOCTYPE html>');
+				printWindow.document.write('<html><head>');
+				printWindow.document.write('<title>Imprimir</title>');
+				printWindow.document.write('<style>');
+				// Estilos generales
+				printWindow.document.write('body { font-family: Arial, sans-serif; color: #333; }');
+				printWindow.document.write('.container { max-width: 800px; margin: 0 auto; padding: 20px; border: 2px solid #0E9F6E; border-radius: 10px; background-color: #f9f9f9; }');
+				printWindow.document.write('.header { text-align: center; font-size: 10px; margin-bottom: 10px; color: black; }');
+				printWindow.document.write('.info { border: 2px solid #0E9F6E; padding: 10px; margin-bottom: 20px; border-radius: 10px; background-color: #fff; }');
+				printWindow.document.write('.info p { margin: 5px 0; }');
+				printWindow.document.write('table { width: 100%; border-collapse: collapse; border: 2px solid #0E9F6E; border-radius: 10px; background-color: #fff; }');
+				printWindow.document.write('table, th, td { border: 1px solid #ddd; padding: 8px; }');
+				printWindow.document.write('th, td { text-align: left; }');
+				// Estilos específicos
+				printWindow.document.write('.highlight { color: black; }');
+				printWindow.document.write('.svg-container { position: absolute; top: 20px; left: 20px; }');
+				printWindow.document.write('</style>');
+				printWindow.document.write('</head><body>');
+				printWindow.document.write('<div class="container">');
 
-        // Espacio para el SVG
-        printWindow.document.write('<div class="svg-container">');
-        printWindow.document.write(`<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+				// Espacio para el SVG
+				printWindow.document.write('<div class="svg-container">');
+				printWindow.document.write(`<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
         width="100" height="100" viewBox="0 0 720 720" enable-background="new 0 0 720 720" xml:space="preserve">
 	   <path fill="#0E9F6E" opacity="1.000000" stroke="none" 
 		   d="
@@ -1192,159 +1245,156 @@
 	   z"/>
 	   </svg>
                                         `);
-        printWindow.document.write('</div>');
+				printWindow.document.write('</div>');
 
-        // Encabezado con los datos de la empresa
-		printWindow.document.write('<div class="header">');
-        printWindow.document.write('<h2>Maderas y Esamblajes "El Pino"</h2>');
-        printWindow.document.write('<p>Ziorely Inda Ibarra</p>');
-        printWindow.document.write('<p class="highlight">RFC IAIZ-760804-RW6 </p>');
-        printWindow.document.write('<p>Regimen de las personas fisicas con</p>');
-        printWindow.document.write('<p>actividades empresariales y prefesionales</p>');
-        printWindow.document.write('<p>Allende No.23 COL.CENTRO C.P 82800</p>');
-        printWindow.document.write('<p>Tel. 6941166060</p>');
-        printWindow.document.write('<p>El Rosario,Sinaloa, México</p>');
-        printWindow.document.write('</div>');
-        // Datos del cliente
-printWindow.document.write('<div class="info">');
-printWindow.document.write('<strong class="text-center font-bold text-xl p-5">Nombre:</strong> <p>{{$compra->nombreCliente}}</p>');
-printWindow.document.write('<div style="display: flex; justify-content: space-between; margin-left: 2px; padding: 2px; padding-top: 5px;">');
-printWindow.document.write('<div style="width: 50%;">');
-printWindow.document.write('<p style="font-weight: bold; font-size: 16px;">Domicilio:</p>');
-printWindow.document.write('<p style="font-weight: normal; font-size: 14px;">{{$compra->nombreColonia}}, {{$compra->calle}}, {{$compra->numCasa}}</p>');
-printWindow.document.write('<p style="font-weight: bold; font-size: 16px;">Ciudad:</p>');
-printWindow.document.write('<p style="font-weight: normal; font-size: 14px;">{{$compra->nombreMunicipio}}</p>');
-printWindow.document.write('</div>');
-printWindow.document.write('<div style="width: 50%;">');
-printWindow.document.write('<p style="font-weight: bold; font-size: 16px;">Descripcion Domicilio:</p>');
-printWindow.document.write('<p style="font-weight: normal; font-size: 14px;">{{$compra->descripcionDomicilio}}</p>');
-printWindow.document.write('<p style="font-weight: bold; font-size: 16px;">Telefono:</p>');
-printWindow.document.write('<p style="font-weight: normal; font-size: 14px;">{{$compra->telefono}}</p>');
-printWindow.document.write('</div>');
-printWindow.document.write('</div>');
-printWindow.document.write('</div>');
+				// Encabezado con los datos de la empresa
+				printWindow.document.write('<div class="header">');
+				printWindow.document.write('<h2>Maderas y Esamblajes "El Pino"</h2>');
+				printWindow.document.write('<p>Ziorely Inda Ibarra</p>');
+				printWindow.document.write('<p class="highlight">RFC IAIZ-760804-RW6 </p>');
+				printWindow.document.write('<p>Regimen de las personas fisicas con</p>');
+				printWindow.document.write('<p>actividades empresariales y prefesionales</p>');
+				printWindow.document.write('<p>Allende No.23 COL.CENTRO C.P 82800</p>');
+				printWindow.document.write('<p>Tel. 6941166060</p>');
+				printWindow.document.write('<p>El Rosario,Sinaloa, México</p>');
+				printWindow.document.write('</div>');
+				// Datos del cliente
+				printWindow.document.write('<div class="info">');
+				printWindow.document.write('<strong class="text-center font-bold text-xl p-5">Nombre:</strong> <p>{{$compra->nombreCliente}}</p>');
+				printWindow.document.write('<div style="display: flex; justify-content: space-between; margin-left: 2px; padding: 2px; padding-top: 5px;">');
+				printWindow.document.write('<div style="width: 50%;">');
+				printWindow.document.write('<p style="font-weight: bold; font-size: 16px;">Domicilio:</p>');
+				printWindow.document.write('<p style="font-weight: normal; font-size: 14px;">{{$compra->nombreColonia}}, {{$compra->calle}}, {{$compra->numCasa}}</p>');
+				printWindow.document.write('<p style="font-weight: bold; font-size: 16px;">Ciudad:</p>');
+				printWindow.document.write('<p style="font-weight: normal; font-size: 14px;">{{$compra->nombreMunicipio}}</p>');
+				printWindow.document.write('</div>');
+				printWindow.document.write('<div style="width: 50%;">');
+				printWindow.document.write('<p style="font-weight: bold; font-size: 16px;">Descripcion Domicilio:</p>');
+				printWindow.document.write('<p style="font-weight: normal; font-size: 14px;">{{$compra->descripcionDomicilio}}</p>');
+				printWindow.document.write('<p style="font-weight: bold; font-size: 16px;">Telefono:</p>');
+				printWindow.document.write('<p style="font-weight: normal; font-size: 14px;">{{$compra->telefono}}</p>');
+				printWindow.document.write('</div>');
+				printWindow.document.write('</div>');
+				printWindow.document.write('</div>');
 
-// Detalles de la compra
-printWindow.document.write('<div class="info"  margin-bottom: 20px;">');
-printWindow.document.write('<h2 style="text-align: center; margin-bottom: 10px;">Detalle de la Compra</h2>');
-printWindow.document.write('<div style="display: flex; justify-content: space-between; text-align: left;">');
-printWindow.document.write('<div>');
-printWindow.document.write('<div style="margin-bottom: 5px;"><strong>Fecha:</strong> {{$compra->fecha}}</div>');
-printWindow.document.write('<div style="margin-bottom: 5px;"><strong>Por saldar: </strong> {{$compra->cantidadASaldar}}</div>');
-printWindow.document.write('<div style="margin-bottom: 5px;"><strong> Articulo(s):</strong>  {{$compra->nombreArticulo}}</div>');
-printWindow.document.write('<div style="margin-bottom: 5px;"><strong> Enganche:</strong>  {{$compra->enganche}}</div>');
-printWindow.document.write('</div>');
-printWindow.document.write('<div>');
-printWindow.document.write('<div style="margin-bottom: 5px;"><strong> Valor: </strong> {{$compra->cantidadTipoVenta}}</div>');
-printWindow.document.write('<div style="margin-bottom: 5px;"><strong> Semanas Deuda:</strong>  {{$compra->diasDeuda}}</div>');
-printWindow.document.write('<div><strong> Folio:</strong>  {{$compra->folioCompra}}</div>');
-printWindow.document.write('</div>');
-printWindow.document.write('</div>');
-printWindow.document.write('</div>');
+				// Detalles de la compra
+				printWindow.document.write('<div class="info"  margin-bottom: 20px;">');
+				printWindow.document.write('<h2 style="text-align: center; margin-bottom: 10px;">Detalle de la Compra</h2>');
+				printWindow.document.write('<div style="display: flex; justify-content: space-between; text-align: left;">');
+				printWindow.document.write('<div>');
+				printWindow.document.write('<div style="margin-bottom: 5px;"><strong>Fecha:</strong> {{$compra->fecha}}</div>');
+				printWindow.document.write('<div style="margin-bottom: 5px;"><strong>Por saldar: </strong> {{$compra->cantidadASaldar}}</div>');
+				printWindow.document.write('<div style="margin-bottom: 5px;"><strong> Articulo(s):</strong>  {{$compra->nombreArticulo}}</div>');
+				printWindow.document.write('<div style="margin-bottom: 5px;"><strong> Enganche:</strong>  {{$compra->enganche}}</div>');
+				printWindow.document.write('</div>');
+				printWindow.document.write('<div>');
+				printWindow.document.write('<div style="margin-bottom: 5px;"><strong> Valor: </strong> {{$compra->cantidadTipoVenta}}</div>');
+				printWindow.document.write('<div style="margin-bottom: 5px;"><strong> Semanas Deuda:</strong>  {{$compra->diasDeuda}}</div>');
+				printWindow.document.write('<div><strong> Folio:</strong>  {{$compra->folioCompra}}</div>');
+				printWindow.document.write('</div>');
+				printWindow.document.write('</div>');
+				printWindow.document.write('</div>');
 
-            // Tabla de abonos
-            printWindow.document.write('<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">');
-            
-            printWindow.document.write('<tbody>');
+				// Tabla de abonos
+				printWindow.document.write('<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">');
 
-            // Obtén las filas de la tabla de abonos
-            var tableRows = document.getElementById('tablaAbonos').rows;
+				printWindow.document.write('<tbody>');
 
-            // Recorre cada fila y sus celdas para escribir en la ventana de impresión
-            for (var i = 0; i < tableRows.length; i++) {
-                var cells = tableRows[i].cells;
-                printWindow.document.write('<tr>');
-                // Recorre solo las primeras 5 celdas (sin la última)
-                for (var j = 0; j < 5; j++) {
-                    printWindow.document.write('<td style="border: 1px solid #ddd; padding: 8px;">' + cells[j].innerHTML + '</td>');
-                }
-                printWindow.document.write('</tr>');
-            }
+				// Obtén las filas de la tabla de abonos
+				var tableRows = document.getElementById('tablaAbonos').rows;
 
-            printWindow.document.write('</tbody>');
-            printWindow.document.write('</table>');
+				// Recorre cada fila y sus celdas para escribir en la ventana de impresión
+				for (var i = 0; i < tableRows.length; i++) {
+					var cells = tableRows[i].cells;
+					printWindow.document.write('<tr>');
+					// Recorre solo las primeras 5 celdas (sin la última)
+					for (var j = 0; j < 5; j++) {
+						printWindow.document.write('<td style="border: 1px solid #ddd; padding: 8px;">' + cells[j].innerHTML + '</td>');
+					}
+					printWindow.document.write('</tr>');
+				}
 
-            printWindow.document.write('</div>');
+				printWindow.document.write('</tbody>');
+				printWindow.document.write('</table>');
 
-            // Cierra la escritura del documento y llama al método print para imprimir
-            printWindow.document.close();
-            printWindow.print();
-        });
-    });
-</script>
+				printWindow.document.write('</div>');
 
-   <script type="text/javascript" charset="utf8">
-    
-$(document).ready(function () {
-    var table = $('#tablaAbonos').DataTable({
-        responsive: true,
-            "language": {
-                "sProcessing":     "Procesando...",
-                "sLengthMenu":     "Mostrar _MENU_ registros",
-                "sZeroRecords":    "No se encontraron resultados",
-                "sEmptyTable":     "Ningún dato disponible en esta tabla",
-                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix":    "",
-                "sSearch":         "Buscar:",
-                "sUrl":            "",
-                "sInfoThousands":  ",",
-                "sLoadingRecords": "Cargando...",
-                "oPaginate": {
-                    "sFirst":    "Primero",
-                    "sLast":     "Último",
-                    "sNext":     "Siguiente",
-                    "sPrevious": "Anterior"
-                },
-                "oAria": {
-                    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                }
-            },
-    });
-    $('#previousBtn').on('click', function(e) {
-      e.preventDefault();
-      table.page('previous').draw(false);
-    });
+				// Cierra la escritura del documento y llama al método print para imprimir
+				printWindow.document.close();
+				printWindow.print();
+			});
+		});
+	</script>
 
-    // Agrega evento de clic al botón Next
-    $('#nextBtn').on('click', function(e) {
-      e.preventDefault();
-      table.page('next').draw(false);
-    });
- 
+	<script type="text/javascript" charset="utf8">
+		$(document).ready(function() {
+			var table = $('#tablaAbonos').DataTable({
+				responsive: true,
+				"language": {
+					"sProcessing": "Procesando...",
+					"sLengthMenu": "Mostrar _MENU_ registros",
+					"sZeroRecords": "No se encontraron resultados",
+					"sEmptyTable": "Ningún dato disponible en esta tabla",
+					"sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+					"sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+					"sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+					"sInfoPostFix": "",
+					"sSearch": "Buscar:",
+					"sUrl": "",
+					"sInfoThousands": ",",
+					"sLoadingRecords": "Cargando...",
+					"oPaginate": {
+						"sFirst": "Primero",
+						"sLast": "Último",
+						"sNext": "Siguiente",
+						"sPrevious": "Anterior"
+					},
+					"oAria": {
+						"sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+						"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+					}
+				},
+			});
+			$('#previousBtn').on('click', function(e) {
+				e.preventDefault();
+				table.page('previous').draw(false);
+			});
 
-    $('#dia, #cobrador').change(function () {
-        var cobrador = $('#cobrador').val();
-        var filtroFecha = $('#dia').val();
-
-        // Aplica filtros en las columnas correspondientes
-        table.column(4).search(cobrador).draw(); // Filtro para Area
-        table.column(0).search(filtroFecha).draw(); // Filtro para Fecha
-    });
-
-    $('#busqueda').on('keyup', function (e) {
-        var filtroBusqueda = $('#busqueda').val();
-        table.search(filtroBusqueda).draw();
-    });
-
-    // Limpiar los filtros al hacer clic en el botón "Limpiar Filtros"
-    $('#limpiarFiltros').on('click', function () {
-        $('#dia, #mes, #estatus').val('');
-        table.search('').columns().search('').draw();
-    });
-});
+			// Agrega evento de clic al botón Next
+			$('#nextBtn').on('click', function(e) {
+				e.preventDefault();
+				table.page('next').draw(false);
+			});
 
 
+			$('#dia, #cobrador').change(function() {
+				var cobrador = $('#cobrador').val();
+				var filtroFecha = $('#dia').val();
 
+				// Aplica filtros en las columnas correspondientes
+				table.column(4).search(cobrador).draw(); // Filtro para Area
+				table.column(0).search(filtroFecha).draw(); // Filtro para Fecha
+			});
 
-</script>
+			$('#busqueda').on('keyup', function(e) {
+				var filtroBusqueda = $('#busqueda').val();
+				table.search(filtroBusqueda).draw();
+			});
+
+			// Limpiar los filtros al hacer clic en el botón "Limpiar Filtros"
+			$('#limpiarFiltros').on('click', function() {
+				$('#dia, #mes, #estatus').val('');
+				table.search('').columns().search('').draw();
+			});
+		});
+	</script>
 
 
 
 </body>
+
 </html>
 
 </body>
+
 </html>

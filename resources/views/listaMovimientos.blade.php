@@ -125,7 +125,11 @@
 							<td>{{$dato->nombreEmpleado}}</td>
 							<td>{{$dato->nombreCategoriaArticulo}}</td>
 							<td>{{$dato->nombreArticulo}}</td>
-							<td>{{$dato->nombreTipoMovimiento}}</td>
+							<td>
+								{{$dato->nombreTipoMovimiento}}
+									
+							</td>
+
                             <td>{{$dato->cantidad}}</td>
 							<td>{{$dato->fecha}}</td>
 						</tr>

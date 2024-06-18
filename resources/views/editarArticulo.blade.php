@@ -80,11 +80,11 @@
 					</div>
 					<div>
 						<label for="" class="block mb-2 text-sm font-medium text-gray-900">Precio a un año</label>
-						<input type="number" name="precioADosMeses" value="{{$datosEngancheYCosto4->cantidadTipoVenta}}"class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
+						<input type="number" name="precioUnAño" value="{{$datosEngancheYCosto4->cantidadTipoVenta}}"class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
 					</div>
                     <div>
 						<label for="" class="block mb-2 text-sm font-medium text-gray-900">Enganche a un año </label>
-						<input type="number" id=""  name="EngancheADosMeses" value="{{$datosEngancheYCosto4->enganche}}" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
+						<input type="number" id=""  name="EngancheUnAño" value="{{$datosEngancheYCosto4->enganche}}" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
 					</div>
 					<div>
 						<label for="" class="block mb-2 text-sm font-medium text-gray-900">Cantidad actual</label>

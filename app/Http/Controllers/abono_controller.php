@@ -8,6 +8,7 @@ use App\Models\abonoArticulo;
 use App\Models\ComprasClientes;
 use App\Models\Cliente;
 use App\Models\Empleado;
+use App\Models\ArticuloTipoVenta;
 use Carbon\Carbon;
 
 class abono_controller extends Controller
@@ -21,6 +22,7 @@ class abono_controller extends Controller
         $abono->fecha = now();
         $abono->estatus = 1;
         $abono->abono = $req->cantidad;
+        $abono->fkConcepto = 1;
         $abono->saldo = $compra->cantidadASaldar;
         $abono->fkEmpleado=session('id');
         $abono->fkComprasCliente=$req->pkComprasCliente;
@@ -33,17 +35,63 @@ class abono_controller extends Controller
         $compra->diasDeuda=$req->diasDeuda;
         $compra->estatusDeCobro=0;
         $abono->folioAbono=uniqid();
-        $abono->save();
-        $compra->save();
-        if(session('fkTipoUsuario') == 2){
-            return redirect(route('cobrador.Tarjetas', ['pkEmpleado' =>  session('id')]))->with('success', '¡Abono agregado exitosamente!');
-        }elseif(session('fkTipoUsuario') == 1||session('fkTipoUsuario') == 3){
-            return redirect(url('/clientesRegistrados'))->with('success', '¡Abono agregado exitosamente!');
+
+        $articulo = ArticuloTipoVenta::where('pkArticuloTipoVenta',$compra->fkArticuloTipoVenta )
+        ->first();
+      
+        $tipoVenta2 = ArticuloTipoVenta::where('fkTipoVenta', 2)
+        ->where('fkArticulo',$articulo->fkArticulo )
+        ->first();
+        $totalAbonado = AbonoArticulo::where('fkComprasCliente', $compra->pkcomprasCliente)
+        ->where('fkConcepto', 1)
+        ->sum('abono');
+
+
+        $liquidacion2 = $tipoVenta2 ? $tipoVenta2->cantidadTipoVenta - ($totalAbonado + $req->cantidad) : null;
+
+        // Fecha de un mes en el futuro
+        $fechaUnMesAdelante = now()->addMonth();
+        // Comprobar si la fecha de la compra está dentro de un mes o más en el futuro
+        if ($compra->fecha <= $fechaUnMesAdelante && $liquidacion2 == 0) {
+            $abono->fkConcepto = 6;
+            $compra->estatus = 0;
+            $compra->fkArticuloTipoVenta = $tipoVenta2->pkArticuloTipoVenta;
+            $compra->cantidadASaldar = 0;
+            $compra->diasDeuda = $req->diasDeuda;
+            $compra->estatusDeCobro = 0;
+            $abono->folioAbono = uniqid();
+            $abono->save();
+            $compra->save();
+        
+            return redirect(url('/historialCompras'))->with('success', '¡Compra Actualizada!');
         }
-    } else {
-        return redirect(url()->previous())->with('error', 'Error en Abono');
+        
+        $tipoVenta3 = ArticuloTipoVenta::where('fkTipoVenta', 3)
+            ->where('fkArticulo', $articulo->fkArticulo)
+            ->first();
+        
+        $liquidacion3 = $tipoVenta3 ? $tipoVenta3->cantidadTipoVenta - ($totalAbonado + $req->cantidad) : null;
+        
+        // Fecha de dos meses en el futuro
+        $fechaDosMesesAdelante = now()->addMonths(2);
+        
+        // Comprobar si la fecha de la compra está dentro de dos meses o más en el futuro
+        if ($compra->fecha <= $fechaDosMesesAdelante && $compra->fecha > $fechaUnMesAdelante && $liquidacion3 == 0) {
+            $abono->fkConcepto = 7;
+            $compra->fkArticuloTipoVenta = $tipoVenta3->pkArticuloTipoVenta;
+            $compra->estatus = 0;
+            $compra->cantidadASaldar = 0;
+            $compra->diasDeuda = $req->diasDeuda;
+            $compra->estatusDeCobro = 0;
+            $abono->folioAbono = uniqid();
+            $abono->save();
+            $compra->save();
+        
+            return redirect(url('/historialCompras'))->with('success', '¡Compra Actualizada!');
+        }
+        
     }
-    }
+}
     function mostrarAbonosPorIdCliente($pkCompra, $vista = "detalleCompra"){
         $compra = Cliente::join('comprascliente', 'comprascliente.fkCliente', '=', 'cliente.pkCliente')
         ->join('articulotipoventa', 'articulotipoventa.pkArticuloTipoVenta', '=', 'comprascliente.fkArticuloTipoVenta')
@@ -51,6 +99,7 @@ class abono_controller extends Controller
         ->join('tipoventa', 'tipoventa.pkTipoVenta', '=', 'articulotipoventa.fkTipoVenta')
         ->join('colonia', 'colonia.pkColonia', '=', 'cliente.fkColonia')
         ->join('municipio', 'municipio.pkMunicipio', '=', 'colonia.fkMunicipio')
+       
         ->select(
             'cliente.*',
             'cliente.telefono',
@@ -68,7 +117,8 @@ class abono_controller extends Controller
         $abonos=abonoArticulo::join('comprascliente', 'comprascliente.pkComprasCliente', '=', 'abonoarticulo.fkComprasCliente')
         ->join('empleado', 'abonoarticulo.fkEmpleado', '=', 'empleado.pkEmpleado')
         ->join('cliente', 'comprascliente.fkCliente', '=', 'cliente.pkCliente')
-                    ->select('empleado.*', 'cliente.*','abonoarticulo.*','abonoarticulo.fecha as FECHAABONO')->where('comprascliente.pkComprasCliente', '=', $pkCompra)->get();
+        ->join('concepto', 'concepto.pkConcepto', '=', 'abonoarticulo.fkConcepto')
+                    ->select('empleado.*','concepto.*', 'cliente.*','abonoarticulo.*','abonoarticulo.fecha as FECHAABONO')->where('comprascliente.pkComprasCliente', '=', $pkCompra)->get();
         return view($vista,compact("abonos","compra"));
       }
       //FUNCION ABONOS GENERALES
@@ -81,7 +131,9 @@ class abono_controller extends Controller
         ->join('articulo', 'articulo.pkArticulo', '=', 'articulotipoventa.fkArticulo')
         ->join('tipoventa', 'tipoventa.pkTipoVenta', '=', 'articulotipoventa.fkTipoVenta')
                     ->select('empleado.*', 'cliente.*','abonoarticulo.*','abonoarticulo.fecha AS FECHAABONO'
-                    ,'comprascliente.*','articulotipoventa.*','articulo.*','tipoventa.*',)->get();
+                    ,'comprascliente.*','articulotipoventa.*','articulo.*','tipoventa.*',)
+                    ->where('abonoarticulo.fkConcepto', '=', 1)
+                    ->get();
                     return view("historialAbonos",compact("abonos"));
       }
       function infoParaAbono($pkEmpleado , $vista = "repartirTarjetas"){

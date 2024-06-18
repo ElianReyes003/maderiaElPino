@@ -71,6 +71,7 @@
                         <option value="A dos meses">A dos meses</option>
                         <option value="Al mes">Al mes</option>
                         <option value="Al contado">Al contado</option>
+						<option value="A un año">A un año</option>
                     </select>
 					<div class="flex mt-3">
                         <button  type="button"id="limpiarFiltros"  class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">

@@ -76,6 +76,87 @@
                     </div>
                 </div>
             
+  
+                <div class="bg-white rounded-lg shadow-lg p-4">
+			<form id="formulario" action="{{ route('compra.actualizar', ['pkCompra' => $compra->pkcomprasCliente]) }}" enctype="multipart/form-data"  method="post">
+					@csrf 
+					<div class="ml-2 p-2 pt-5 mt-10">
+					<h2 class="font-semibold text-2xl text-center">Actualizar Compra  </h2>
+						<div class="grid grid-cols-1 gap-4 text-justify">
+							<div class="p-2">
+                            @php
+                                use App\Models\tipoVenta;
+                                $datosVenta = tipoVenta::all();
+                            @endphp
+								<label for="" class="block mb-2 text-sm font-medium text-gray-900">Tiempo De Pago</label>
+								<div>
+									<select name="fkTipoVenta" id="tipoVenta" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
+										<option value="">Selecciona Tipo de Venta</option>
+										@foreach ($datosVenta as $ventita)
+											<option {{ $ventita->pkTipoVenta == $compra->pkTipoVenta ? 'selected' : '' }} value="{{ $ventita->pkTipoVenta }}">
+												{{ $ventita->nombreTipoVenta }}
+											</option>
+										@endforeach
+									</select>
+								</div>
+							</div>
+                        
+							<input type="hidden" value="{{$compra->pkArticulo}}" name="articulito">
+                            @if(session('fkTipoUsuario')==1)
+							<div class="p-2">
+								<label for="" class="block mb-2 text-sm font-medium text-gray-900">Semanas de deuda</label>
+								<input type="number" value="{{$compra->diasDeuda}}" name="deuda" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" >
+							</div>
+                            @endif
+							<div class="p-2">
+                                
+                            @if(session('fkTipoUsuario')==1)
+								<div class="p-2">
+									<label for="" class="block mb-2 text-sm font-medium text-gray-900">Cantidad a Saldar</label>
+									<input type="number" value="{{$compra->cantidadASaldar}}" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" name="saldar">								
+								</div>
+                                @endif
+
+            
+								<div class="p-2">
+									<label for="underline_select" class="sr-only">Selecciona estatus</label>
+									<select name="estatus" id="estatus" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
+										@foreach ([1, 0, 2] as $valor)
+											<option value="{{ $valor }}" {{ $compra->ESTATUSCOMPRA == $valor ? 'selected' : '' }}>
+												@if ($valor === 1)
+													Pago Pendiente
+												@elseif ($valor === 0)
+													Pago Completado
+												@else
+													Pago Vencido
+												@endif
+											</option>
+										@endforeach
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="flex md:justify-end justify-center">
+							<div class="mt-5 flex md:justify-end justify-center">
+								<button type="submit" class="w-full flex items-center bg-green-500 p-2 text-base font-medium text-white rounded-lg hover:bg-green-400">
+										<svg class="flex-shrink-0 w-7 h-7 text-white transition duration-75 group-hover:text-green-" width="800px" height="800px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+											<path d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm6.4350288 11.7071068c-.3905242-.3905243-1.0236892-.3905243-1.4142135 0l-6.3646682 6.3632539-3.5348268-3.5348268c-.3905242-.3905243-1.0236892-.3905243-1.41421352 0-.39052429.3905243-.39052429 1.0236893 0 1.4142136l4.24264072 4.2426407c.3905243.3905242 1.0236892.3905242 1.4142135 0 .0040531-.0040531.0080641-.0081323.012033-.0122371l7.0590348-7.0588308c.3905243-.3905242.3905243-1.0236892 0-1.4142135z" fill="currentColor" fill-rule="evenodd"/>
+										</svg>
+									<p class="flex-1 ms-3 whitespace-nowrap">Aplicar</p>
+								</button>	
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+
+
+
+
+
+
+
 <form id="formulario" action="{{ route('abono.insertar') }}" enctype="multipart/form-data"  method="post" >
 @csrf
 				<div class="flex justify-center">

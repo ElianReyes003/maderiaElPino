@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Maderas El Pino</title>
+
+
 </head>
 <body>
 @if(session('id'))
@@ -69,8 +71,6 @@
 							<h2 class="font-bold">Precio a un año: <p class="font-normal">{{$datosEngancheYCosto4->cantidadTipoVenta}}</p></h2>
 						</div>
 						<div class="ml-2 md:ml-5 p-2">
-							<h2 class="font-bold">Enganche al mes: <p class="font-normal">{{$datosEngancheYCosto2->enganche}}</p></h2>
-							<h2 class="font-bold">Enganche a dos meses: <p class="font-normal">{{$datosEngancheYCosto3->enganche}}</p></h2>
 							<h2 class="font-bold">Enganche a un año: <p class="font-normal">{{$datosEngancheYCosto4->enganche}}</p></h2>
 						</div>
                     </div>
@@ -113,12 +113,118 @@
                                     @foreach ($datosCategoria as $dato)
                                         <option value="{{$dato->pktipoMovimiento}}">{{$dato->nombreTipoMovimiento}}</option>
                                     @endforeach
+									<option value="5">Conversion de articulo</option>
 							</select>
 						</div>
 						<div>
 							<label for="" class="block mb-2 text-sm font-medium text-gray-900"></label>
 							<input type="number"  name="cantidadSeleccionada" id="" class="bg-green-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-400 focus:border-green-400 block w-full p-2.5" placeholder="" required>
 						</div>
+
+						<div class="p-4 sm:ml-64">
+    
+                      
+                        <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                </svg>
+                            </div>
+                            <input type="search"  id="busqueda"  class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-400 focus:border-green-400" placeholder="Buscar" >
+                        </div>
+              
+                 </div>
+               
+                 <label for="underline_select" class="sr-only">Selecciona Categoria Articulo</label>
+                    <select name="fkCategoria" id="fkCategoria" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
+                            @php
+                                use App\Models\categoriaArticulo;
+                                $datosCategoria=categoriaArticulo::where('estatus', 1)->get();
+                            @endphp	
+                            <option selected value="">Categoria Articulo</option>
+                            @foreach ($datosCategoria as $dato)
+                            <option value="{{$dato->nombreCategoriaArticulo}}">{{$dato->nombreCategoriaArticulo}}</option>
+                            @endforeach
+                                </select>
+                                <label for="underline_select" class="sr-only">Selecciona Estatus</label>
+                                <select name="fkEstatus" id="fkEstatus" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-green-400 peer">
+                                    <option selected value="" >Estatus</option>
+                        <option value="1">Disponible</option>
+                        <option value="0">No Disponible</option>
+                        <option value="2">Por Agotarse</option>
+                    </select>
+                    <div class="flex mt-3   ">
+                        <button type="button"id="limpiarFiltros" class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+                            Limpiar filtros
+                        </button>    
+                    </div>
+                 </div>
+		
+
+		   <div class="bg-white rounded-lg shadow-lg mt-10">
+			<div class="flex justify-center mb-[1rem]">
+				<div class="">
+					<h1 class="text-center font-bold text-2xl mt-5">Selecciona articulos</h1>
+				</div>
+			</div>
+			<table class="w-full table-auto mt-[1rem]"  id="tablaArticulos" class="display nowrap" width="90%">
+				<thead class="text-center">
+					<tr class="h-24 text-center">
+                        <td class="oculto">ID</td>
+                        <th>Nombre</th>
+                        <th>Categoria</th>
+                        <th>Estatus</th>
+                        <th>Stock</th>
+                        <th>Seleccionar</th>
+					</tr>
+					<tbody>
+                    @foreach ($datosArticulosGenerales as $dato ) 
+						<tr class="h-20">
+                        <td class="oculto">{{$dato->pkArticulo}}</td>
+                        <th>{{$dato->nombreArticulo}}</th>
+                        <th>{{$dato->nombreCategoriaArticulo}}</th>
+                        <th>
+                            @if($dato->ESTATUSARTICULO == 1)
+                                Disponible
+                            @elseif($dato->ESTATUSARTICULO == 2)
+                                Por Agotarse
+                            @elseif($dato->ESTATUSARTICULO == 0)
+                                No Disponible
+                            @else
+                                Estado Desconocido
+                            @endif
+                        </th>
+                        <th>{{$dato->cantidadActual}}</th>
+							<td class="items-center flex justify-center">									
+								<div class="mt-2 md:mt-5">
+									<input type="checkbox" name="articulo-seleccionado" class="seleccionar-articulo" data-articulo-id="{{$dato->pkArticulo}}" class="w-6 h-6 rounded text-green-400 bg-gray-100 border-gray-300 focus:ring-green-400 focus:ring-2">
+                                </div>
+							</td>
+						</tr>
+                    @endforeach
+
+					</tbody>
+					</thead>
+				</table>
+				<div class="flex justify-center	mt-16">
+					<div class="md:p-10 p-5">
+						  <div class="flex">
+							<!-- Previous Button -->
+                            <button id="previousBtn"class="flex items-center justify-center px-4 h-10 md:px-10 md:mr-20 mr-10 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+							  Anterior
+							</button>
+							<!-- Next Button -->
+							<button id="nextBtn"  class="flex items-center justify-center px-4 h-10 md:px-10 md:ml-20 ml-10 ms-3 text-base font-medium text-white bg-green-500 border rounded-lg hover:bg-green-400">
+							  Siguiente
+							</button>
+						  </div>
+					</div>
+				</div>
+
+
+				<input type="hidden" name="subarticulo[]" id="subarticulo" value="">
+
 						<div class="md:mt-2">
 							<button type="submit" class=" w-full flex items-center bg-green-500 p-2 text-base font-medium text-white rounded-lg hover:bg-green-400">
 								<svg class="flex-shrink-0 w-7 h-7 text-white transition duration-75 group-hover:text-green-" width="800px" height="800px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm6.4350288 11.7071068c-.3905242-.3905243-1.0236892-.3905243-1.4142135 0l-6.3646682 6.3632539-3.5348268-3.5348268c-.3905242-.3905243-1.0236892-.3905243-1.41421352 0-.39052429.3905243-.39052429 1.0236893 0 1.4142136l4.24264072 4.2426407c.3905243.3905242 1.0236892.3905242 1.4142135 0 .0040531-.0040531.0080641-.0081323.012033-.0122371l7.0590348-7.0588308c.3905243-.3905242.3905243-1.0236892 0-1.4142135z" fill="currentColor" fill-rule="evenodd"/></svg>
@@ -138,7 +244,7 @@
 				<div class="mr-10">
 					<form action="{{ route('articulo.baja', ['pkArticulo' => $datosArticulos->pkArticulo]) }}"  id="bajaForm" method="POST">
 						@csrf <!-- Agrega el token CSRF para protección contra falsificación de solicitudes -->
-						<button type="submit"  onclick="confirmarBaja(event)" class="flex items-center bg-green-500 p-2 text-base font-medium text-white rounded-lg hover:bg-green-400">
+						<button type="submit" id="completar" onclick="confirmarBaja(event)" class="flex items-center bg-green-500 p-2 text-base font-medium text-white rounded-lg hover:bg-green-400">
 							<svg class="flex-shrink-0 w-7 h-7 text-white transition duration-75 group-hover:text-green-" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="800px" height="800px" viewBox="0 0 24 24">
 								<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/>
 							</svg>
@@ -151,8 +257,129 @@
 		</div>
      </div>
    <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>	
-
+   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+   <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+   <script  src="https://cdn.datatables.net/plug-ins/1.13.7/api/fnMultiFilter.js"></script>
    <script>
+
+var tableArticulos = $('#tablaArticulos').DataTable({
+        responsive: true,
+        "language": {
+            "search": "Buscar compra:",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "zeroRecords": "Sin resultados",
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+        },
+    });
+	var  clienteSeleccionadoGlobal =0;
+	  // Maneja el evento de cambio de los checkboxes
+	  $('.seleccionar-articulo').on('change', function() {
+        var selectedArticles = [];
+		
+        $('input[name="articulo-seleccionado"]:checked').each(function() {
+            selectedArticles.push($(this).data('articulo-id'));
+			var articuloId = $(this).data('articulo-id');
+			clienteSeleccionadoGlobal=articuloId;
+        });
+        $('#subarticulo').val(selectedArticles.join(','));
+        console.log('Artículos seleccionados:', selectedArticles);
+    });
+
+
+
+
+    $('#previousBtn').on('click', function(e) {
+      e.preventDefault();
+      tableArticulos.page('previous').draw(false);
+    });
+
+    // Agrega evento de clic al botón Next
+    $('#nextBtn').on('click', function(e) {
+      e.preventDefault();
+      tableArticulos.page('next').draw(false);
+    });
+    $('#limpiarFiltros').on('click', function () {
+        $('#fkEstatus, #fkCategoria').val('');
+        tableArticulos.search('').columns().search('').draw();
+    });
+
+    var tableArticulosSeleccionados = $('#articulos-lista').DataTable({
+        responsive: true,
+        "language": {
+            "emptyTable": "No hay datos disponibles en la tabla",
+        },
+    });
+    $('#previousBtn2').on('click', function(e) {
+      e.preventDefault();
+      tableArticulosSeleccionados.page('previous').draw(false);
+    });
+
+    // Agrega evento de clic al botón Next
+    $('#nextBtn2').on('click', function(e) {
+      e.preventDefault();
+      tableArticulosSeleccionados.page('next').draw(false);
+    });
+
+    $('#fkEstatus, #fkCategoria').change(function () {
+        var estatus = $('#fkEstatus').val();
+        var categoria = $('#fkCategoria').val();
+            if (estatus === '1') {
+            estatus = 'Disponible';
+        } else if (estatus === '2') {
+            estatus = 'Por Agotarse';
+        }
+        else if (estatus === '0') {
+            estatus = 'No Disponible';
+        }
+
+        tableArticulos.column(3).search(estatus).draw();
+        tableArticulos.column(2).search(categoria).draw();
+    });
+
+    $('#busqueda').on('keyup', function (e) {
+        var filtroBusqueda = $('#busqueda').val();
+        tableArticulos.search(filtroBusqueda).draw();
+    });
+
+    $('#limpiarFiltros').on('click', function () {
+        $('#fkEstatus, #fkCategoria').val('');
+        tableArticulos.search('').columns().search('').draw();
+    });
+
+
+
+
+	
+function actualizarCamposOcultos() {
+    // Elimina el campo oculto #cliente existente
+   
+    $('#formulario').find('input[name="subarticulo[]"]').remove();
+
+    // Agrega nuevos campos ocultos con los valores de los artículos seleccionados
+    $('input[name="articulo-seleccionado"]:checked').each(function() {
+        var articuloId = $(this).data('articulo-id');
+        $('#formulario').append("<input type='hidden' name='subarticulo[]' value='" + articuloId + "'>");
+    });
+   
+}
+
+
+$('#completar').click(function () {
+    // Obtiene el cliente seleccionado
+    
+	e.preventDefault(); // Evita el envío del formulario por defecto
+    actualizarCamposOcultos();
+    $('#formulario').submit();
+});
+
+
 function confirmarBaja(event) {
     event.preventDefault();
 

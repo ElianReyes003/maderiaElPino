@@ -34,11 +34,7 @@ class empleado_controller extends Controller
                }
                
            } else {
-               // Redirigir al usuario con un mensaje de error
-               return redirect()->to('/')
-               ->with('error_credentials', 'Usuario o contraseña incorrectos')
-               ->with('error_retry', 'Introduzca sus datos de nuevo')
-               ->with('use_js_alerts', true);
+            return redirect()->back()->withInput()->withErrors(['error']);
            }
        }
         /*funcion cerrar sesión*/

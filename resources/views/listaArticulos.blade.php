@@ -107,6 +107,7 @@
 					<tr class="h-24 text-center">
              
                 <th>Nombre</th>
+                <th>Cantidad</th>
                 <th>Categoria</th>
                 <th>Precio</th>
                 <th>Estatus</th>
@@ -118,6 +119,7 @@
 						<tr class="h-20">
           
                         <th>{{$dato->nombreArticulo}}</th>
+                        <th>{{$dato->cantidadActual}}</th>
                         <th id="Categoria" class="Categoria">{{$dato->nombreCategoriaArticulo}}</th>
                         <th>{{$dato->cantidadTipoVenta}}</th>
                         <th>
